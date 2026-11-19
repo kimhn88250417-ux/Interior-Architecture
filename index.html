@@ -1,1960 +1,1331 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="자산가계부">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="theme-color" content="#2563eb">
-  <link rel="manifest" href="manifest.json">
-  <title>내 자산 가계부 · 핀테크 라이트 v3.5</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Chart.js CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <!-- Pretendard Font -->
-  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-  <!-- Custom Light Stylesheet -->
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>실내건축산업기사 기출문제 CBT</title>
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --card: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --primary-soft: #eff6ff;
+      --success: #16a34a;
+      --success-soft: #dcfce7;
+      --danger: #dc2626;
+      --danger-soft: #fee2e2;
+      --warn: #d97706;
+      --warn-soft: #fef3c7;
+      --shadow: 0 4px 18px rgba(15, 23, 42, 0.06);
+      --radius: 14px;
+    }
+
+    body.dark {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --border: #334155;
+      --primary: #60a5fa;
+      --primary-hover: #3b82f6;
+      --primary-soft: #1e3a8a;
+      --success: #4ade80;
+      --success-soft: #14532d;
+      --danger: #f87171;
+      --danger-soft: #7f1d1d;
+      --warn: #fbbf24;
+      --warn-soft: #78350f;
+      --shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Pretendard', 'Noto Sans KR', 'Malgun Gothic', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    }
+    .header-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 12px 18px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand-badge {
+      background: var(--primary);
+      color: #fff;
+      font-weight: 800;
+      font-size: 13px;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+    .brand h1 { margin: 0; font-size: 18px; font-weight: 800; letter-spacing: -0.3px; }
+    .brand-sub { font-size: 12px; color: var(--muted); }
+    .header-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+    .btn {
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      padding: 7px 13px;
+      border-radius: 9px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .btn:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn.active, .btn-primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+    .btn-primary:hover:not(:disabled) { background: var(--primary-hover); color: #fff; }
+    .btn-success {
+      background: var(--success);
+      border-color: var(--success);
+      color: #fff;
+    }
+    .btn-danger { color: var(--danger); }
+    .btn-danger:hover:not(:disabled) { border-color: var(--danger); background: var(--danger-soft); }
+
+    .container {
+      max-width: 1180px;
+      margin: 18px auto 60px;
+      padding: 0 16px;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .stat-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    .stat-label { font-size: 11px; color: var(--muted); font-weight: 600; }
+    .stat-val { font-size: 19px; font-weight: 800; margin-top: 2px; }
+    .stat-val.green { color: var(--success); }
+    .stat-val.red { color: var(--danger); }
+    .stat-val.blue { color: var(--primary); }
+
+    .progress-bar-wrap {
+      height: 8px;
+      background: var(--bg);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin-bottom: 14px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--success));
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .filters-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+      gap: 10px;
+      align-items: end;
+    }
+    .filter-group label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .filter-group select, .filter-group input {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+    }
+    .filter-group select:focus, .filter-group input:focus { border-color: var(--primary); }
+
+    .mode-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .mode-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .q-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+    .q-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .q-badges { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .badge.subj { background: var(--primary-soft); color: var(--primary); border-color: transparent; }
+    .badge.dup { background: var(--warn-soft); color: var(--warn); border-color: transparent; }
+
+    .q-num-title { font-size: 17px; font-weight: 700; margin-bottom: 14px; line-height: 1.65; }
+    .q-num { color: var(--primary); font-weight: 800; margin-right: 6px; }
+    .q-extra { margin-top: 10px; }
+    .q-img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin: 8px 0;
+      cursor: zoom-in;
+      background: #fff;
+      padding: 4px;
+    }
+
+    .choices { display: flex; flex-direction: column; gap: 9px; margin-top: 10px; }
+    .choice-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      width: 100%;
+      text-align: left;
+      padding: 12px 15px;
+      border: 1.5px solid var(--border);
+      border-radius: 11px;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.14s;
+      line-height: 1.55;
+    }
+    .choice-btn:hover { border-color: var(--primary); background: var(--primary-soft); }
+    .choice-num {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      margin-top: 2px;
+    }
+    .choice-btn.selected { border-color: var(--primary); background: var(--primary-soft); }
+    .choice-btn.selected .choice-num { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .choice-btn.correct { border-color: var(--success); background: var(--success-soft); }
+    .choice-btn.correct .choice-num { background: var(--success); border-color: var(--success); color: #fff; }
+    .choice-btn.wrong { border-color: var(--danger); background: var(--danger-soft); }
+    .choice-btn.wrong .choice-num { background: var(--danger); border-color: var(--danger); color: #fff; }
+
+    .q-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .exp-box {
+      margin-top: 16px;
+      padding: 15px 17px;
+      border-radius: 11px;
+      background: var(--primary-soft);
+      border-left: 4px solid var(--primary);
+      font-size: 14px;
+      line-height: 1.7;
+      display: none;
+    }
+    .exp-box.show { display: block; }
+    .exp-title { font-weight: 800; color: var(--primary); margin-bottom: 6px; }
+    .exp-empty { color: var(--muted); font-style: italic; }
+
+    .cbt-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Mock Exam Layout */
+    .mock-layout {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 16px;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .mock-layout { grid-template-columns: 1fr; }
+    }
+    .omr-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 78px;
+    }
+    .omr-timer {
+      font-size: 22px;
+      font-weight: 800;
+      text-align: center;
+      padding: 8px;
+      border-radius: 10px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      margin-bottom: 10px;
+      font-variant-numeric: tabular-nums;
+    }
+    .omr-section-title {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--muted);
+      margin: 10px 0 5px;
+    }
+    .omr-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 5px;
+    }
+    .omr-cell {
+      padding: 5px 2px;
+      text-align: center;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .omr-cell.current { outline: 2px solid var(--primary); }
+    .omr-cell.answered { background: var(--primary-soft); border-color: var(--primary); color: var(--primary); }
+    .omr-cell.is-correct { background: var(--success-soft); border-color: var(--success); color: var(--success); }
+    .omr-cell.is-wrong { background: var(--danger-soft); border-color: var(--danger); color: var(--danger); }
+
+    .result-banner {
+      padding: 20px;
+      border-radius: var(--radius);
+      margin-bottom: 16px;
+      border: 2px solid var(--border);
+      text-align: center;
+    }
+    .result-banner.pass { background: var(--success-soft); border-color: var(--success); }
+    .result-banner.fail { background: var(--danger-soft); border-color: var(--danger); }
+    .result-scores {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .result-score-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+    }
+
+    /* Modals */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 16px;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      max-width: 780px;
+      width: 100%;
+      max-height: 82vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow);
+    }
+    .modal-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 800;
+    }
+    .modal-body { padding: 16px 18px; overflow-y: auto; }
+    .num-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(46px, 1fr));
+      gap: 7px;
+    }
+    .num-cell {
+      padding: 7px 4px;
+      text-align: center;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .num-cell.current { outline: 2.5px solid var(--primary); }
+    .num-cell.is-correct { background: var(--success-soft); border-color: var(--success); color: var(--success); }
+    .num-cell.is-wrong { background: var(--danger-soft); border-color: var(--danger); color: var(--danger); }
+    .num-cell.is-bookmarked::after { content: "★"; font-size: 10px; margin-left: 2px; color: var(--warn); }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+
+    #imgModal img {
+      max-width: 92vw;
+      max-height: 88vh;
+      border-radius: 10px;
+      background: #fff;
+      padding: 6px;
+    }
+
+    .kbd-hint {
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 640px) {
+      .q-card { padding: 16px; }
+      .q-num-title { font-size: 15.5px; }
+      .choice-btn { font-size: 14px; padding: 10px 12px; }
+    }
+  </style>
 </head>
-<body class="selection:bg-blue-500 selection:text-white">
+<body>
 
-  <!-- ======================================================== -->
-  <!-- 1. 핀테크 라이트 잠금 화면 (White Apple/Toss PIN Lock)    -->
-  <!-- ======================================================== -->
-  <div id="lockScreen" class="fixed inset-0 z-50 flex items-center justify-center">
-    <div class="lock-card">
-      <div class="lock-badge-icon">
-        💎
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <span class="brand-badge">실내건축산업기사</span>
+      <div>
+        <h1>2016~2020 기출문제 CBT</h1>
+        <div class="brand-sub" id="metaSubtitle">로딩 중...</div>
       </div>
-      <h2 class="text-xl font-bold text-gray-900 tracking-tight mb-1">내 자산 & 가계부</h2>
-      <p class="text-xs text-gray-500 mb-6">자산 정보 보호를 위해 비밀번호를 입력해주세요</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn" id="btnNavGrid">📋 문제 번호표</button>
+      <button class="btn" id="btnDarkMode">🌙 다크모드</button>
+      <button class="btn btn-danger" id="btnReset">🔄 기록 초기화</button>
+    </div>
+  </div>
+</header>
 
-      <!-- 비밀번호 입력 폼 (키보드 숫자 입력 후 엔터 시 바로 로그인) -->
-      <form onsubmit="event.preventDefault(); submitPin();" class="mb-5">
-        <input type="password" id="pinInputDisplay" placeholder="비밀번호 입력" autofocus autocomplete="current-password" onkeydown="handlePinKeydown(event)" oninput="handlePinDirectInput(this.value)"
-               class="input-clean text-center text-xl tracking-widest font-mono font-bold py-3 bg-white border-2 border-blue-400 focus:border-blue-600 focus:outline-none w-full">
-      </form>
-
-      <!-- 오류 메시지 -->
-      <div id="pinErrorMsg" class="text-red-500 text-xs font-semibold mb-3 hidden"></div>
-
-      <!-- 화이트 원형 키패드 -->
-      <div class="keypad-grid grid grid-cols-3 gap-3 mb-5 justify-items-center">
-        <button onclick="handlePinInput('1')" class="keypad-btn-white">1</button>
-        <button onclick="handlePinInput('2')" class="keypad-btn-white">2</button>
-        <button onclick="handlePinInput('3')" class="keypad-btn-white">3</button>
-        <button onclick="handlePinInput('4')" class="keypad-btn-white">4</button>
-        <button onclick="handlePinInput('5')" class="keypad-btn-white">5</button>
-        <button onclick="handlePinInput('6')" class="keypad-btn-white">6</button>
-        <button onclick="handlePinInput('7')" class="keypad-btn-white">7</button>
-        <button onclick="handlePinInput('8')" class="keypad-btn-white">8</button>
-        <button onclick="handlePinInput('9')" class="keypad-btn-white">9</button>
-        <button onclick="resetPinDisplay()" class="keypad-btn-white text-xs font-normal text-gray-400">초기화</button>
-        <button onclick="handlePinInput('0')" class="keypad-btn-white">0</button>
-        <button onclick="handlePinDelete()" class="keypad-btn-white text-base">⌫</button>
+<div class="container">
+  <!-- Stats & Filters -->
+  <div class="panel" id="topPanel">
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-label">현재 필터 문제</div>
+        <div class="stat-val blue" id="statFiltered">0</div>
       </div>
+      <div class="stat-box">
+        <div class="stat-label">누적 풀이 완료</div>
+        <div class="stat-val" id="statSolved">0</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">정답 / 오답</div>
+        <div class="stat-val"><span id="statCorrect" style="color:var(--success)">0</span> / <span id="statWrong" style="color:var(--danger)">0</span></div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">누적 정답률</div>
+        <div class="stat-val green" id="statAcc">0%</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">북마크 (★)</div>
+        <div class="stat-val" id="statBookmark">0</div>
+      </div>
+    </div>
 
-      <!-- 잠금 해제 버튼 -->
-      <button onclick="submitPin()" class="btn-clean btn-primary-clean w-full py-3.5 text-sm shadow-md">
-        🔓 잠금 해제
-      </button>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
 
-      <p class="text-xs text-gray-400 mt-4">키패드를 터치하거나 키보드 숫자키/엔터로 입력할 수 있습니다.</p>
+    <div class="filters-row" id="filtersRow">
+      <div class="filter-group">
+        <label>과목 선택 (3과목)</label>
+        <select id="filterSubject">
+          <option value="ALL">전체 과목 (1,100문항)</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>연도 선택</label>
+        <select id="filterYear">
+          <option value="ALL">전체 연도 (2016~2020)</option>
+          <option value="2020">2020년</option>
+          <option value="2019">2019년</option>
+          <option value="2018">2018년</option>
+          <option value="2017">2017년</option>
+          <option value="2016">2016년</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>풀이 상태</label>
+        <select id="filterStatus">
+          <option value="ALL">모든 문제</option>
+          <option value="UNSOLVED">안 푼 문제만</option>
+          <option value="WRONG">틀린 문제만 (오답노트)</option>
+          <option value="BOOKMARK">북마크한 문제만 (★)</option>
+          <option value="HAS_EXP">해설 있는 문제만</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>정렬 순서</label>
+        <select id="filterSort">
+          <option value="NEWEST">최신순 (2020 → 2016)</option>
+          <option value="OLDEST">과거순 (2016 → 2020)</option>
+          <option value="SHUFFLE">랜덤 섞기</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>키워드 검색</label>
+        <input type="text" id="filterSearch" placeholder="문제 또는 해설 검색..." />
+      </div>
     </div>
   </div>
 
-
-  <!-- ======================================================== -->
-  <!-- 10. 모달: 여행 프로젝트 모은 돈 & 목표 수정               -->
-  <!-- ======================================================== -->
-  <div id="travelFundModal" class="modal-overlay-clean hidden">
-    <div class="modal-box-clean max-w-sm">
-      <div class="flex items-center justify-between pb-3 mb-4 border-b border-gray-100">
-        <h3 id="travelModalTitle" class="text-base font-bold text-gray-900">여행자금 정보 및 모은 돈 수정</h3>
-        <button onclick="closeTravelFundModal()" class="text-gray-400 hover:text-gray-600 font-bold text-lg">✕</button>
-      </div>
-
-      <input type="hidden" id="travelEditId">
-
-      <div class="space-y-4">
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">여행 프로젝트 이름</label>
-          <input type="text" id="travelModalTitleInput" class="input-clean font-semibold">
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">현재까지 모은 돈 (원)</label>
-          <input type="text" id="travelModalCurrentAmount" inputmode="numeric" placeholder="예: 1,000,000" oninput="formatCurrencyInput(this)" class="input-clean font-num text-xl font-extrabold text-amber-600">
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">최종 목표 금액 (원)</label>
-          <input type="text" id="travelModalTargetAmount" inputmode="numeric" placeholder="예: 2,000,000" oninput="formatCurrencyInput(this)" class="input-clean font-num text-base font-bold">
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">목표 달성 예정일</label>
-          <input type="date" id="travelModalTargetDate" class="input-clean text-xs">
-        </div>
-
-        <div class="pt-2 flex items-center gap-2">
-          <button onclick="closeTravelFundModal()" class="btn-clean btn-secondary-clean flex-1 py-3 text-sm">
-            취소
-          </button>
-          <button onclick="saveTravelFundModal()" class="btn-clean btn-amber-clean flex-1 py-3 text-sm shadow-md font-bold">
-            💾 영구 저장
-          </button>
-        </div>
-      </div>
+  <!-- Mode Bar -->
+  <div class="mode-bar">
+    <div class="mode-tabs">
+      <button class="btn active" id="modeSingleBtn">🎯 한 문제씩 풀기</button>
+      <button class="btn" id="modeListBtn">📄 전체 리스트 보기</button>
+      <button class="btn" id="modeMockBtn">📝 60문제 모의고사</button>
+    </div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <button class="btn" id="btnToggleAllAns" style="display:none;">👁️ 전체 정답/해설 보이기</button>
+      <button class="btn" id="btnReshuffle" style="display:none;">🎲 다시 섞기</button>
     </div>
   </div>
 
-  <!-- ======================================================== -->
-  <!-- 2. 메인 애플리케이션 화면                                -->
-  <!-- ======================================================== -->
-  <div id="appContainer" class="hidden min-h-screen flex flex-col bg-slate-50">
+  <!-- Main Content -->
+  <div id="quizContainer"></div>
 
-    <!-- 상단 고정 헤더 -->
-    <header class="app-header px-4 lg:px-8 py-3.5 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white text-lg font-bold shadow-md shadow-blue-500/20">
-          💎
-        </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <h1 class="text-base font-bold text-gray-900 tracking-tight">내 자산 & 가계부</h1>
-            <span class="badge-clean badge-savings">v3.5 라이트</span>
-            <span id="tossApiStatusBadge" class="hidden sm:inline-flex badge-clean badge-income">🟢 토스증권 API 연동됨</span>
-          </div>
-          <p class="text-xs text-gray-500">순자산 관리 · 여행자금 · 토스증권 실시간 연동 · 3·6·9·12개월 비교</p>
-        </div>
-      </div>
+  <div class="kbd-hint" id="kbdHint">
+    💡 단축키: 숫자키 <b>1~4</b> 선택 · <b>← / →</b> 이전/다음 문제 · <b>Space</b> 정답/해설 보기
+  </div>
+</div>
 
-      <!-- 우측 빠른 도구 -->
-      <div class="flex items-center gap-2">
-                <!-- 상단 헤더 글자 포인트 조절기 (8pt ~ 14pt) -->
-        <div class="inline-flex items-center bg-white border border-gray-300 rounded-xl px-2.5 py-1 shadow-2xs gap-1" title="글자 크기 (포인트)">
-          <span class="text-xs font-bold text-gray-500">글꼴</span>
-          <button type="button" onclick="stepFontPt(-1)" class="w-6 h-6 rounded-lg bg-gray-100 hover:bg-emerald-50 hover:text-emerald-700 text-gray-700 font-bold flex items-center justify-center text-xs transition active:scale-95" title="1pt 작게">-</button>
-          <span id="currentFontPtBadge" class="text-xs font-black text-emerald-700 px-1 min-w-[36px] text-center font-num">11pt</span>
-          <button type="button" onclick="stepFontPt(1)" class="w-6 h-6 rounded-lg bg-gray-100 hover:bg-emerald-50 hover:text-emerald-700 text-gray-700 font-bold flex items-center justify-center text-xs transition active:scale-95" title="1pt 크게">+</button>
-        </div>
-
-        <!-- 금액 숨기기 토글 버튼 (000,000원 마스킹) -->
-        <button id="btnToggleHideAmounts" onclick="toggleHideAmounts()" class="btn-clean btn-secondary-clean btn-xs-clean flex items-center gap-1 font-bold text-gray-700 shadow-sm" title="금액 숨기기/보이기 (000,000원 표시)">
-          <span id="hideAmountsIcon">👁️</span>
-          <span id="hideAmountsText">금액 숨기기</span>
-        </button>
-        <button id="btnCloudSyncTop" onclick="openCloudSyncModal()" class="btn-clean btn-secondary-clean btn-xs-clean flex items-center gap-1 font-bold shadow-sm" title="PC·모바일 실시간 클라우드 동기화">
-          <span id="cloudSyncDot">☁️</span>
-          <span id="cloudSyncTopText">실시간 동기화</span>
-        </button>
-        <button onclick="saveAllChangesExplicitly()" class="btn-clean btn-save-glow btn-xs-clean" title="수정한 모든 금액을 브라우저에 영구 저장">
-          💾 전체 저장
-        </button>
-        <button onclick="exportDataBackup()" class="btn-clean btn-secondary-clean btn-xs-clean" title="데이터 백업 다운로드">
-          백업
-        </button>
-        <label class="btn-clean btn-secondary-clean btn-xs-clean cursor-pointer" title="백업 파일 복원">
-          복원
-          <input type="file" id="backupFileInput" accept=".json" class="hidden" onchange="importDataBackup(event)">
-        </label>
-        <button onclick="openChangePasswordModal()" class="btn-clean btn-secondary-clean btn-xs-clean" title="비밀번호 변경">
-          ⚙️ 비번
-        </button>
-        <button onclick="lockApp()" class="btn-clean btn-danger-clean btn-xs-clean">
-          🔒 잠금
-        </button>
-      </div>
-    </header>
-
-    <!-- 탭 네비게이션 필 바 -->
-    <div class="bg-white border-b border-gray-200 px-4 lg:px-8 py-2.5 overflow-x-auto shadow-sm sticky top-[61px] z-30">
-      <div class="flex items-center gap-2 min-w-max">
-        <button id="nav_excel_ledger" onclick="switchTab('excel_ledger')" class="nav-tab-pill active">
-          <span>📑</span> 월급 배분 엑셀 가계부
-        </button>
-        <button id="nav_dashboard" onclick="switchTab('dashboard')" class="nav-tab-pill">
-          <span>📊</span> 종합 대시보드
-        </button>
-        <button id="nav_ledger" onclick="switchTab('ledger')" class="nav-tab-pill">
-          <span>💸</span> 가계부 소비 내역 & 지출 분석
-        </button>
-        <button id="nav_travel" onclick="switchTab('travel')" class="nav-tab-pill">
-          <span>✈️</span> 여행자금 관리
-        </button>
-        <button id="nav_stocks" onclick="switchTab('stocks')" class="nav-tab-pill">
-          <span>📈</span> 주식 & 토스증권
-        </button>
-        <button id="nav_accounts" onclick="switchTab('accounts')" class="nav-tab-pill">
-          <span>🏦</span> 계좌 & 보증금
-        </button>
-        <button id="nav_roadmap" onclick="switchTab('roadmap')" class="nav-tab-pill">
-          <span>🎯</span> 50년 재무 로드맵
-        </button>
-      </div>
+<!-- Number Grid Modal -->
+<div class="modal-backdrop" id="gridModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <span>문제 번호표 (총 <span id="gridTotalCount">0</span>문항)</span>
+      <button class="btn" id="btnCloseGrid">닫기 ✕</button>
     </div>
+    <div class="modal-body">
+      <div class="num-grid" id="numGrid"></div>
+    </div>
+  </div>
+</div>
 
-    <!-- 메인 콘텐츠 영역 -->
-    <main class="flex-1 p-4 lg:p-8 max-w-7xl mx-auto w-full space-y-6">
-      <!-- ======================================================== -->
-      <!-- TAB 0: 월급 배분 엑셀 가계부 (이미지 7 양식 100% 일치)     -->
-      <!-- ======================================================== -->
-      <section id="tab_excel_ledger" class="tab-content space-y-6">
+<!-- Image Zoom Modal -->
+<div class="modal-backdrop" id="imgModal" onclick="this.classList.remove('open')">
+  <img id="zoomedImg" src="" alt="확대 이미지" />
+</div>
 
-        <!-- 엑셀 상단 컨트롤 바 -->
-        <div class="white-card p-5 lg:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-2 border-emerald-500 rounded-3xl shadow-sm bg-white">
-          <div>
-            <div class="flex items-center gap-2 mb-1">
-              <span class="badge-clean badge-income font-bold">EXCEL SPREADSHEET</span>
-              <h2 class="text-lg font-bold text-gray-900">📑 월급 배분 엑셀 가계부</h2>
-            </div>
-            <p class="text-xs text-gray-500">월급을 받으면 미리 고정비, 생활비, 할부, 여행자금, 적금을 한눈에 계산하고 분배하는 실제 엑셀 시트입니다.</p>
+<script src="questions.js"></script>
+<script>
+(function() {
+  const DATA = window.CBT_DATA;
+  if (!DATA || !DATA.questions) {
+    document.getElementById("quizContainer").innerHTML = "<div class='panel'>questions.js 데이터를 불러오지 못했습니다.</div>";
+    return;
+  }
+
+  const SUBJECTS = DATA.meta.subjects || [
+    "1. 실내디자인 계획",
+    "2. 실내디자인 시공 및 재료",
+    "3. 실내디자인 환경"
+  ];
+
+  const STORAGE_KEY = "silnae_cbt_progress_v1";
+  let state = {
+    answers: {},
+    bookmarks: {},
+    mockHistory: [],
+    dark: false
+  };
+
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+    if (saved.answers) state.answers = saved.answers;
+    if (saved.bookmarks) state.bookmarks = saved.bookmarks;
+    if (saved.mockHistory) state.mockHistory = saved.mockHistory;
+    if (saved.dark) state.dark = true;
+  } catch (e) {}
+
+  function saveState() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  if (state.dark) document.body.classList.add("dark");
+
+  const m = DATA.meta;
+  document.getElementById("metaSubtitle").textContent =
+    `총 ${m.totalRaw.toLocaleString()}문항 중 중복 ${m.duplicatesRemoved}문항 제거 → ${m.totalUnique.toLocaleString()}문항 (해설 ${m.withExplanation}개)`;
+
+  const subjSelect = document.getElementById("filterSubject");
+  SUBJECTS.forEach(s => {
+    const cnt = DATA.questions.filter(q => q.subject === s).length;
+    const opt = document.createElement("option");
+    opt.value = s;
+    opt.textContent = `${s} (${cnt}문항)`;
+    subjSelect.appendChild(opt);
+  });
+
+  // App runtime state
+  let mode = "single"; // 'single' | 'list' | 'mock'
+  let filtered = [];
+  let currentIdx = 0;
+  let listPage = 1;
+  const LIST_PAGE_SIZE = 30;
+  let showAllAnsInList = false;
+  let revealedSingle = {};
+
+  // Mock exam state
+  let mock = {
+    active: false,
+    submitted: false,
+    questions: [],
+    userAns: {},      // { [index]: 1..4 }
+    currentIdx: 0,
+    secondsLeft: 3600,
+    timerId: null,
+    onlyWrongReview: false
+  };
+
+  const quizContainer = document.getElementById("quizContainer");
+  const filterSubject = document.getElementById("filterSubject");
+  const filterYear = document.getElementById("filterYear");
+  const filterStatus = document.getElementById("filterStatus");
+  const filterSort = document.getElementById("filterSort");
+  const filterSearch = document.getElementById("filterSearch");
+
+  function stripHtml(html) {
+    const tmp = document.createElement("div");
+    tmp.innerHTML = html || "";
+    return (tmp.textContent || tmp.innerText || "").toLowerCase();
+  }
+
+  function shuffleArr(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function applyFilters(keepIndex = false) {
+    const subj = filterSubject.value;
+    const yr = filterYear.value;
+    const st = filterStatus.value;
+    const sort = filterSort.value;
+    const kw = filterSearch.value.trim().toLowerCase();
+
+    let list = DATA.questions.filter(q => {
+      if (subj !== "ALL" && q.subject !== subj) return false;
+      if (yr !== "ALL" && q.year !== yr && !(q.appearances || []).some(a => a.startsWith(yr))) return false;
+      if (st === "UNSOLVED" && state.answers[q.id]) return false;
+      if (st === "WRONG" && (!state.answers[q.id] || state.answers[q.id] === q.answer)) return false;
+      if (st === "BOOKMARK" && !state.bookmarks[q.id]) return false;
+      if (st === "HAS_EXP" && !q.explanation) return false;
+      if (kw) {
+        const hay = stripHtml(q.question) + " " + q.choices.map(stripHtml).join(" ") + " " + stripHtml(q.explanation);
+        if (!hay.includes(kw)) return false;
+      }
+      return true;
+    });
+
+    if (sort === "OLDEST") list = list.slice().reverse();
+    else if (sort === "SHUFFLE") list = shuffleArr(list);
+
+    filtered = list;
+    if (!keepIndex) {
+      currentIdx = 0;
+      listPage = 1;
+    } else if (currentIdx >= filtered.length) {
+      currentIdx = Math.max(0, filtered.length - 1);
+    }
+
+    document.getElementById("btnReshuffle").style.display = (mode !== "mock" && sort === "SHUFFLE") ? "inline-flex" : "none";
+    updateStats();
+    render();
+  }
+
+  function updateStats() {
+    const total = DATA.questions.length;
+    let solved = 0, correct = 0, wrong = 0, bm = 0;
+    for (const q of DATA.questions) {
+      const a = state.answers[q.id];
+      if (a) {
+        solved++;
+        if (a === q.answer) correct++;
+        else wrong++;
+      }
+      if (state.bookmarks[q.id]) bm++;
+    }
+    const acc = solved > 0 ? Math.round((correct / solved) * 100) : 0;
+    document.getElementById("statFiltered").textContent = filtered.length.toLocaleString();
+    document.getElementById("statSolved").textContent = `${solved.toLocaleString()} / ${total.toLocaleString()}`;
+    document.getElementById("statCorrect").textContent = correct.toLocaleString();
+    document.getElementById("statWrong").textContent = wrong.toLocaleString();
+    document.getElementById("statAcc").textContent = `${acc}%`;
+    document.getElementById("statBookmark").textContent = bm.toLocaleString();
+    document.getElementById("progressFill").style.width = `${Math.round((solved / total) * 100)}%`;
+  }
+
+  function renderQuestionCard(q, displayNum, forceShowAns = false) {
+    const userAns = state.answers[q.id];
+    const isAnswered = !!userAns;
+    const isRevealed = isAnswered || forceShowAns || !!revealedSingle[q.id];
+    const isBookmarked = !!state.bookmarks[q.id];
+
+    const dupBadges = (q.appearances && q.appearances.length > 1)
+      ? `<span class="badge dup" title="중복 출제된 회차: ${q.appearances.join(', ')}">중복 출제 ${q.appearances.length}회 (${q.appearances.slice(1).join(', ')})</span>`
+      : "";
+
+    let choicesHtml = "";
+    q.choices.forEach((cHtml, idx) => {
+      const cNum = idx + 1;
+      let cls = "choice-btn";
+      if (isRevealed) {
+        if (cNum === q.answer) cls += " correct";
+        else if (userAns === cNum && cNum !== q.answer) cls += " wrong";
+      }
+      choicesHtml += `
+        <button class="${cls}" data-qid="${q.id}" data-choice="${cNum}">
+          <span class="choice-num">${cNum}</span>
+          <span>${cHtml}</span>
+        </button>
+      `;
+    });
+
+    const expContent = q.explanation
+      ? q.explanation
+      : `<span class="exp-empty">등록된 해설이 없습니다. (정답: ${q.answer}번)</span>`;
+
+    return `
+      <div class="q-card" id="qcard-${q.id}">
+        <div class="q-meta">
+          <div class="q-badges">
+            <span class="badge subj">${q.subject}</span>
+            <span class="badge">${q.examLabel} #${q.num}</span>
+            ${dupBadges}
+            <span class="badge">정답률 ${q.rate}%</span>
           </div>
-
-          <div class="flex items-center gap-2 flex-wrap">
-            <!-- 글자 크기 4단계 선택 툴바 (사용자 자유 변경) -->
-            <div class="inline-flex items-center rounded-xl p-1 bg-slate-100 border border-slate-300 gap-1 text-xs font-bold" id="fontSizeButtonsGroup">
-              <span class="text-gray-600 px-1.5 flex items-center gap-1 font-bold"><span>🔤</span> 글꼴 크기:</span>
-              <select id="excelFontPtSelect" onchange="setExcelFontPt(this.value)" class="bg-white border border-gray-300 text-gray-800 rounded-lg px-2 py-1 font-bold text-xs shadow-xs focus:ring-1 focus:ring-emerald-500">
-                <option value="8pt">8 pt</option>
-                <option value="9pt">9 pt</option>
-                <option value="10pt">10 pt</option>
-                <option value="11pt" selected>11 pt (기본)</option>
-                <option value="12pt">12 pt</option>
-                <option value="14pt">14 pt</option>
-              </select>
-              <div class="inline-flex rounded-lg border border-gray-200 bg-white p-0.5 gap-0.5">
-                <button type="button" onclick="setExcelFontPt('8pt')" class="excel-pt-btn px-2 py-1 rounded text-xs font-bold transition text-gray-600 hover:text-emerald-700 hover:bg-emerald-50" data-pt="8pt">8pt</button>
-                <button type="button" onclick="setExcelFontPt('9pt')" class="excel-pt-btn px-2 py-1 rounded text-xs font-bold transition text-gray-600 hover:text-emerald-700 hover:bg-emerald-50" data-pt="9pt">9pt</button>
-                <button type="button" onclick="setExcelFontPt('10pt')" class="excel-pt-btn px-2 py-1 rounded text-xs font-bold transition text-gray-600 hover:text-emerald-700 hover:bg-emerald-50" data-pt="10pt">10pt</button>
-                <button type="button" onclick="setExcelFontPt('11pt')" class="excel-pt-btn px-2 py-1 rounded text-xs font-bold transition active bg-emerald-600 text-white shadow-xs" data-pt="11pt">11pt</button>
-                <button type="button" onclick="setExcelFontPt('12pt')" class="excel-pt-btn px-2 py-1 rounded text-xs font-bold transition text-gray-600 hover:text-emerald-700 hover:bg-emerald-50" data-pt="12pt">12pt</button>
-                <button type="button" onclick="setExcelFontPt('14pt')" class="excel-pt-btn px-2 py-1 rounded text-xs font-bold transition text-gray-600 hover:text-emerald-700 hover:bg-emerald-50" data-pt="14pt">14pt</button>
-              </div>
-            </div>
-            <!-- 3개월 / 6개월 / 1년 기간별 배분 보기 버튼 -->
-            <div class="inline-flex rounded-xl p-1 bg-slate-100 border border-slate-200 gap-1 text-xs font-bold" id="excelPeriodButtons">
-              <button type="button" onclick="setExcelPeriod(1)" class="excel-period-btn px-3 py-1.5 rounded-lg transition active bg-white shadow-xs text-blue-600" data-period="1">1개월 (당월)</button>
-              <button type="button" onclick="setExcelPeriod(3)" class="excel-period-btn px-3 py-1.5 rounded-lg transition text-gray-600 hover:text-gray-900" data-period="3">3개월 각각 보기</button>
-              <button type="button" onclick="setExcelPeriod(6)" class="excel-period-btn px-3 py-1.5 rounded-lg transition text-gray-600 hover:text-gray-900" data-period="6">6개월 각각 보기</button>
-              <button type="button" onclick="setExcelPeriod(12)" class="excel-period-btn px-3 py-1.5 rounded-lg transition text-gray-600 hover:text-gray-900" data-period="12">1년 각각 보기</button>
-            </div>
-
-            <select id="excelMonthSelect" onchange="changeExcelMonth(this.value)" class="input-clean text-sm font-bold py-2 px-3 border-gray-300 w-auto bg-white shadow-xs">
-              <optgroup label="2026년">
-                <option value="2026-10" selected>2026년 10월 (26.10월)</option>
-                <option value="2026-11">2026년 11월 (26.11월)</option>
-                <option value="2026-12">2026년 12월 (26.12월)</option>
-              </optgroup>
-              <optgroup label="2027년">
-                <option value="2027-01">2027년 01월 (27.01월)</option>
-                <option value="2027-02">2027년 02월 (27.02월)</option>
-                <option value="2027-03">2027년 03월 (27.03월)</option>
-                <option value="2027-04">2027년 04월 (27.04월)</option>
-                <option value="2027-05">2027년 05월 (27.05월)</option>
-                <option value="2027-06">2027년 06월 (27.06월)</option>
-                <option value="2027-07">2027년 07월 (27.07월)</option>
-                <option value="2027-08">2027년 08월 (27.08월)</option>
-                <option value="2027-09">2027년 09월 (27.09월)</option>
-                <option value="2027-10">2027년 10월 (27.10월)</option>
-                <option value="2027-11">2027년 11월 (27.11월)</option>
-                <option value="2027-12">2027년 12월 (27.12월)</option>
-              </optgroup>
-            </select>
-
-            <button onclick="saveExcelBudget()" class="btn-clean btn-primary-clean btn-sm-clean shadow-sm font-bold flex items-center gap-1.5">
-              💾 엑셀 저장
-            </button>
-            <button onclick="exportExcelToXLSX()" class="btn-clean btn-primary-clean btn-sm-clean shadow-sm font-bold flex items-center gap-1.5" title="정품 Microsoft Excel (.xlsx) 파일 다운로드">📥 엑셀(.xlsx) 다운</button>
-            <button onclick="exportExcelToCSV()" class="btn-clean btn-secondary-clean btn-sm-clean flex items-center gap-1.5" title="엑셀 파일로 다운로드">
-              📥 엑셀(CSV) 다운
-            </button>
-          </div>
+          <button class="btn" data-bm="${q.id}">${isBookmarked ? "★ 북마크됨" : "☆ 북마크"}</button>
         </div>
 
-        <!-- 넉넉하게 폭이 넓어진 엑셀 시트 뷰 (max-w-6xl) -->
-        <div id="excelMonthlyContainer" class="white-card p-6 shadow-md overflow-x-auto">
-          <div class="max-w-6xl mx-auto border-2 border-gray-300 rounded-2xl overflow-hidden shadow-md bg-white">
-            
-            <!-- 엑셀 상단 헤더 바 (산뜻하고 차분한 연한 회색 Light Gray 스타일) -->
-            <div class="bg-gradient-to-r from-slate-100 via-gray-100 to-slate-200 text-gray-900 text-center font-extrabold text-xl py-3.5 tracking-wider font-mono border-b border-gray-300 flex items-center justify-between px-4 sm:px-6 shadow-2xs">
-              <div class="flex items-center gap-2">
-                <button onclick="prevExcelMonth()" class="text-xs bg-white hover:bg-gray-50 text-gray-700 font-bold py-1.5 px-3 rounded-lg border border-gray-300 shadow-2xs transition" title="이전 월">◀</button>
-                <span id="excelSheetTitle" class="tracking-wider text-xl font-extrabold text-gray-900 drop-shadow-2xs">26.10월</span>
-                <button onclick="nextExcelMonth()" class="text-xs bg-white hover:bg-gray-50 text-gray-700 font-bold py-1.5 px-3 rounded-lg border border-gray-300 shadow-2xs transition" title="다음 월">▶</button>
-                <span id="excelPeriodMultiplierBadge" class="hidden text-xs bg-white text-gray-700 font-extrabold px-2.5 py-0.5 rounded-full ml-1 border border-gray-300 shadow-2xs">1개월 기준</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <button onclick="openAddExcelRowModal()" class="text-xs bg-white hover:bg-gray-50 text-gray-800 font-extrabold py-1.5 px-3.5 rounded-lg border border-gray-300 shadow-2xs transition flex items-center gap-1">
-                  <span>+</span> 새 항목 추가
-                </button>
-              </div>
-            </div>
-
-            <!-- 엑셀 시트 테이블 (연한 회색 헤더 & 가운데 정렬) -->
-            <table class="w-full text-sm border-collapse">
-              <thead>
-                <tr class="bg-gray-100 border-b border-gray-300 text-xs text-gray-700 font-bold">
-                  <th class="py-3 px-4 text-center w-1/4 border-r border-gray-200">구분 / 항목명</th>
-                  <th class="py-3 px-4 text-center w-1/6 border-r border-gray-200">예산 금액 (원)</th>
-                  <th class="py-3 px-4 text-center w-1/4 border-r border-gray-200">사용처 / 구매처</th>
-                  <th class="py-3 px-4 text-center w-1/6 border-r border-gray-200">실제 사용 금액 (원)</th>
-                  <th class="py-3 px-4 text-center w-1/12 border-r border-gray-200">차액</th>
-                  <th class="py-3 px-3 text-center w-14">관리</th>
-                </tr>
-              </thead>
-              <tbody id="excelTableBody">
-                <!-- JS 동적 생성: 월급, 월세, 공과금, 변동지출, 치아교정, 필라테스, 여행경비, 적금 등 -->
-              </tbody>
-              <tfoot id="excelTableFoot" class="border-t-2 border-gray-300">
-                <!-- JS 자동 합산: 소비값, 월급-소비 남은금액, 저축금액 (모든 열 끝까지 100% 채움) -->
-              </tfoot>
-            </table>
-          </div>
+        <div class="q-num-title">
+          <span class="q-num">Q${displayNum}.</span>${q.question}
         </div>
 
-                <!-- 3. 맨 밑에 위치하는 월별 배분 & 지출 한눈에 비교 그래프 -->
-        <div id="excelChartCard" class="white-card p-6 border-2 border-indigo-200 rounded-3xl shadow-sm bg-white mt-6">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-100">
-            <div>
-              <div class="flex items-center gap-2 mb-1">
-                <span class="badge-clean badge-income font-bold">EXCEL VISUAL ANALYTICS</span>
-                <h3 class="text-base font-extrabold text-gray-900">📊 월별 배분 & 지출 한눈에 비교 그래프</h3>
-              </div>
-              <p class="text-xs text-gray-500">최근 3개월(또는 선택 기간)의 월급 실수령액, 예산 배분, 실제 지출, 저축액, 잔여 여유자금을 한눈에 비교합니다.</p>
-            </div>
-            <!-- 3대 요약 KPI 지표 배지 -->
-            <div class="flex items-center gap-3 bg-indigo-50/70 border border-indigo-100 px-4 py-2 rounded-2xl flex-wrap">
-              <div class="text-center">
-                <span class="text-[10px] text-gray-500 block font-semibold">평균 저축률</span>
-                <span id="excelChartAvgSavingsRate" class="text-sm font-extrabold text-red-600 font-num">0%</span>
-              </div>
-              <div class="h-6 w-px bg-indigo-200"></div>
-              <div class="text-center">
-                <span class="text-[10px] text-gray-500 block font-semibold">총 누적 저축</span>
-                <span id="excelChartTotalSavings" class="text-sm font-extrabold text-indigo-700 font-num">0원</span>
-              </div>
-              <div class="h-6 w-px bg-indigo-200"></div>
-              <div class="text-center">
-                <span class="text-[10px] text-gray-500 block font-semibold">평균 실지출</span>
-                <span id="excelChartAvgActual" class="text-sm font-extrabold text-amber-700 font-num">0원</span>
-              </div>
-            </div>
-          </div>
+        <div class="choices">${choicesHtml}</div>
 
-          <!-- Chart.js 캔버스 영역 -->
-          <div class="relative w-full h-80 sm:h-96 mt-4">
-            <canvas id="excelComparisonChart"></canvas>
+        <div class="q-footer">
+          <div style="font-size:13px; font-weight:700; color:${isAnswered ? (userAns === q.answer ? 'var(--success)' : 'var(--danger)') : 'var(--muted)'}">
+            ${isAnswered
+              ? (userAns === q.answer ? "✅ 정답입니다!" : `❌ 오답입니다. (정답: ${q.answer}번)`)
+              : (isRevealed ? `📌 정답: ${q.answer}번` : "보기를 선택해 주세요.")}
           </div>
+          <button class="btn" data-peek="${q.id}">${isRevealed ? "해설 접기/확인" : "👁️ 정답·해설 보기"}</button>
         </div>
 
-      </section>
-
-      <!-- ======================================================== -->
-      <!-- TAB 1: 종합 대시보드                                    -->
-      <!-- ======================================================== -->
-      <section id="tab_dashboard" class="tab-content hidden space-y-6">
-
-        <!-- 상단 종합 대시보드 컨트롤 바 (통일 스타일: border-2 border-blue-500 rounded-3xl) -->
-        <div class="white-card p-5 lg:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-2 border-blue-500 rounded-3xl shadow-sm bg-white">
-          <div>
-            <div class="flex items-center gap-2 mb-1">
-              <span class="px-3 py-0.5 rounded-full text-xs font-bold bg-blue-50 text-blue-600 border border-blue-200">TOTAL DASHBOARD</span>
-              <h2 class="text-lg font-bold text-gray-900">📊 종합 자산 & 재무 대시보드</h2>
-            </div>
-            <p class="text-xs text-gray-500">한 달의 수입, 지출, 저축률과 내 모든 자산 흐름을 한눈에 조망하는 종합 관제 센터입니다.</p>
-          </div>
-
-          <div class="flex items-center gap-2 flex-wrap">
-            <div class="flex items-center gap-2 bg-slate-100 border border-slate-200 px-3 py-1 rounded-xl">
-              <span class="text-xs font-bold text-gray-600">조회 월</span>
-              <select id="dashMonthSelect" class="input-clean text-sm font-bold w-auto py-1.5 px-2.5 border-gray-300 bg-white rounded-lg shadow-xs">
-                <!-- JS 동적 생성 -->
-              </select>
-            </div>
-            <button onclick="openAddTxModal('expense')" class="btn-clean btn-danger-clean btn-sm-clean shadow-sm font-bold rounded-xl px-3.5 py-2">
-              − 지출 기록
-            </button>
-            <button onclick="openAddTxModal('income')" class="btn-clean btn-success-clean btn-sm-clean shadow-sm font-bold rounded-xl px-3.5 py-2">
-              + 입금 기록
-            </button>
-            <button onclick="openAddTxModal('savings')" class="btn-clean btn-primary-clean btn-sm-clean shadow-sm font-bold rounded-xl px-3.5 py-2">
-              저축/투자 기록
-            </button>
-          </div>
+        <div class="exp-box ${isRevealed ? "show" : ""}" id="exp-${q.id}">
+          <div class="exp-title">💡 정답 [${q.answer}번] 및 해설</div>
+          <div>${expContent}</div>
         </div>
+      </div>
+    `;
+  }
 
-        <!-- 0. 보증금 분리 및 내 순수 자산 대형 히어로 카드 (3분할) -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-          
-          <!-- 1. 내 진짜 순수 순자산 (진짜 내 돈 - 수정 가능!) -->
-          <div class="white-card white-card-hover p-6 border-l-4 border-emerald-500 bg-gradient-to-br from-emerald-50/50 to-white">
-            <div class="flex items-center justify-between text-xs text-gray-500 mb-1">
-              <span class="font-bold text-emerald-700 flex items-center gap-1.5 text-xs">
-                ⭐️ 내 순수 순자산 (진짜 내 돈)
-              </span>
-              <button onclick="openEditNetWorthModal()" class="text-xs font-bold text-emerald-600 hover:text-emerald-800 bg-emerald-100/60 px-2 py-0.5 rounded transition">
-                ✏️ 순자산 직접 수정
-              </button>
-            </div>
-            <div id="dashMyPureNetWorth" class="text-2xl lg:text-3xl font-extrabold font-num text-emerald-600 mt-1">0원</div>
-            <div class="text-xs text-gray-500 mt-2.5 flex items-center justify-between">
-              <span>내 보증금 <b class="text-gray-800">1,000만원</b> + 통장/적금/토스주식</span>
-              <button onclick="editMyDepositDirect()" class="text-[11px] font-semibold text-gray-500 hover:text-gray-800 underline">
-                보증금 수정
-              </button>
-            </div>
-          </div>
+  // Mock Exam Functions
+  function startMockExam(preferUnsolved = false) {
+    if (mock.timerId) clearInterval(mock.timerId);
+    const picked = [];
+    for (const s of SUBJECTS) {
+      let pool = DATA.questions.filter(q => q.subject === s);
+      if (preferUnsolved) {
+        const unsolved = shuffleArr(pool.filter(q => !state.answers[q.id]));
+        const solved = shuffleArr(pool.filter(q => state.answers[q.id]));
+        pool = unsolved.concat(solved);
+      } else {
+        pool = shuffleArr(pool);
+      }
+      picked.push(...pool.slice(0, 20));
+    }
 
-          <!-- 2. 부모님 지원 보증금 (별도 분리 - 수정 가능!) -->
-          <div class="white-card white-card-hover p-6 border-l-4 border-indigo-500 bg-gradient-to-br from-indigo-50/50 to-white">
-            <div class="flex items-center justify-between text-xs text-gray-500 mb-1">
-              <span class="font-bold text-indigo-700 flex items-center gap-1.5 text-xs">
-                🤝 부모님 지원 보증금
-              </span>
-              <button onclick="editParentsDepositDirect()" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-100/60 px-2 py-0.5 rounded transition">
-                ✏️ 금액 수정
-              </button>
-            </div>
-            <div id="dashParentsSupport" class="text-2xl lg:text-3xl font-extrabold font-num text-indigo-600 mt-1">30,000,000원</div>
-            <div class="text-xs text-gray-500 mt-2.5">
-              내 순자산에서 <b class="text-indigo-800">완전 분리된 지원 자산</b>
-            </div>
-          </div>
+    mock = {
+      active: true,
+      submitted: false,
+      questions: picked,
+      userAns: {},
+      currentIdx: 0,
+      secondsLeft: 3600,
+      timerId: null,
+      onlyWrongReview: false
+    };
 
-          <!-- 3. 자취방 총 임차보증금 -->
-          <div class="white-card white-card-hover p-6 border-l-4 border-blue-500 bg-gradient-to-br from-blue-50/50 to-white">
-            <div class="flex items-center justify-between text-xs text-gray-500 mb-1">
-              <span class="font-bold text-blue-700 flex items-center gap-1.5 text-xs">
-                🏠 자취방 총 임차보증금
-              </span>
-              <span class="badge-clean badge-savings">원룸 거주중</span>
-            </div>
-            <div id="dashTotalDeposit" class="text-2xl lg:text-3xl font-extrabold font-num text-blue-600 mt-1">40,000,000원</div>
-            <div class="text-xs text-gray-500 mt-2.5">
-              부모님 3,000만원 + 내 자금 1,000만원 합산
-            </div>
-          </div>
-        </div>
+    mock.timerId = setInterval(() => {
+      if (!mock.active || mock.submitted) return;
+      mock.secondsLeft--;
+      const el = document.getElementById("mockTimerDisplay");
+      if (el) el.textContent = formatTime(mock.secondsLeft);
+      if (mock.secondsLeft <= 0) {
+        submitMockExam(true);
+      }
+    }, 1000);
 
-        <!-- 1. 핵심 지표 카드 4개 -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div class="white-card white-card-hover p-5 border-l-4 border-emerald-500">
-            <div class="text-xs font-semibold text-gray-400 mb-1">내 순수 순자산</div>
-            <div id="dashTotalNetWorth" class="text-xl lg:text-2xl font-bold font-num text-emerald-600">0원</div>
-            <div class="text-[11px] text-gray-400 mt-1.5">부모님 3,000만원 완전 제외</div>
-          </div>
+    render();
+  }
 
-          <!-- 이번 달 총 수입 (수정 가능!) -->
-          <div class="white-card white-card-hover p-5 border-l-4 border-blue-500">
-            <div class="flex items-center justify-between text-xs font-semibold text-gray-400 mb-1">
-              <span>이번 달 총 수입</span>
-              <button onclick="openEditSalaryModal()" class="text-[11px] font-bold text-blue-600 hover:text-blue-800">
-                ✏️ 기본월급 수정
-              </button>
-            </div>
-            <div id="dashMonthIncome" class="text-xl lg:text-2xl font-bold font-num text-blue-600">2,036,240원</div>
-            <div class="text-[11px] text-gray-400 mt-1.5">기본 2,036,240원 매월 자동 설정</div>
-          </div>
+  function formatTime(sec) {
+    const s = Math.max(0, sec);
+    const mm = String(Math.floor(s / 60)).padStart(2, "0");
+    const ss = String(s % 60).padStart(2, "0");
+    return `⏱️ ${mm}:${ss}`;
+  }
 
-          <div class="white-card white-card-hover p-5 border-l-4 border-red-500">
-            <div class="text-xs font-semibold text-gray-400 mb-1">이번 달 순수 소비/지출</div>
-            <div id="dashMonthExpense" class="text-xl lg:text-2xl font-bold font-num text-red-500">0원</div>
-            <div id="dashMonthBalance" class="text-[11px] text-gray-400 mt-1.5">소비 후 잔액: 0원</div>
-          </div>
+  function submitMockExam(auto = false) {
+    if (!auto) {
+      const answeredCnt = Object.keys(mock.userAns).length;
+      if (answeredCnt < mock.questions.length) {
+        if (!confirm(`아직 풀지 않은 문제가 ${mock.questions.length - answeredCnt}개 있습니다. 제출하고 채점할까요?`)) return;
+      }
+    }
+    mock.submitted = true;
+    if (mock.timerId) { clearInterval(mock.timerId); mock.timerId = null; }
 
-          <div class="white-card white-card-hover p-5 border-l-4 border-purple-500">
-            <div class="text-xs font-semibold text-gray-400 mb-1">이번 달 저축 & 투자</div>
-            <div id="dashMonthSavings" class="text-xl lg:text-2xl font-bold font-num text-purple-600">0원</div>
-            <div id="dashSavingsRate" class="text-[11px] text-purple-600 font-semibold mt-1.5">저축률 0%</div>
-          </div>
-        </div>
+    // Save answers into global progress & record mock history
+    let totalCorrect = 0;
+    const subjScores = SUBJECTS.map(s => ({ subject: s, correct: 0, total: 20, score: 0 }));
 
-        <!-- 2. 2026 저축 목표 달성 게이지 바 (목표 및 달성액 수정 가능!) -->
-        <div class="white-card p-6">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
-            <div>
-              <div class="flex items-center gap-2">
-                <h3 class="text-base font-bold text-gray-900">
-                  🎯 2026년 목표 저축 달성 현황
-                </h3>
-                <span id="dashGoalBadge" class="badge-clean badge-income">목표: 1,500만원</span>
-                <button onclick="openEditGoalModal()" class="text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 px-2.5 py-1 rounded-md transition border border-blue-200">
-                  ✏️ 저축 달성액 / 목표 수정
-                </button>
-              </div>
-              <p class="text-xs text-gray-500 mt-0.5">적금, 주식 매수, 청약, 청년미래적금 누적 합산 (금액 직접 변경 가능)</p>
-            </div>
-            <div class="text-right">
-              <span id="dashGoalSaved" class="text-lg font-bold font-num text-emerald-600">7,100,000원</span>
-              <span class="text-xs text-gray-400"> / <span id="dashGoalTarget">15,000,000원</span></span>
-            </div>
-          </div>
+    mock.questions.forEach((q, idx) => {
+      const ua = mock.userAns[idx];
+      if (ua) {
+        state.answers[q.id] = ua;
+      }
+      if (ua === q.answer) {
+        totalCorrect++;
+        const sIdx = Math.floor(idx / 20);
+        if (subjScores[sIdx]) subjScores[sIdx].correct++;
+      }
+    });
 
-          <div class="progress-clean-track">
-            <div id="dashGoalProgress" class="progress-clean-fill" style="width: 47.3%"></div>
-          </div>
+    subjScores.forEach(s => { s.score = Math.round((s.correct / s.total) * 100); });
+    const avgScore = Math.round((totalCorrect / 60) * 100);
+    const hasFailSubj = subjScores.some(s => s.score < 40);
+    const passed = avgScore >= 60 && !hasFailSubj;
 
-          <div class="flex justify-between items-center text-xs text-gray-400 mt-2">
-            <span>시작 자산 (610만원)</span>
-            <span id="dashGoalPercentText" class="font-bold text-emerald-600">47.3% 달성</span>
-            <span>최종 목표: 1,500만원</span>
-          </div>
-        </div>
+    state.mockHistory.unshift({
+      date: new Date().toLocaleString("ko-KR"),
+      avg: avgScore,
+      correct: totalCorrect,
+      passed
+    });
+    if (state.mockHistory.length > 20) state.mockHistory.length = 20;
 
-        <!-- 3. 차트 섹션 (자산 포트폴리오 비중 & 월별 추이) -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div class="white-card p-6 flex flex-col justify-between">
-            <div class="mb-3">
-              <h4 class="text-sm font-bold text-gray-900">💰 내 자산 포트폴리오 비중</h4>
-              <p class="text-xs text-gray-400">내 보증금, 일반 적금, 여행자금, 토스주식, 현금 비중</p>
-            </div>
-            <div class="h-64 relative">
-              <canvas id="dashAssetChart"></canvas>
-            </div>
-          </div>
+    saveState();
+    updateStats();
+    render();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
-          <div class="white-card p-6 flex flex-col justify-between">
-            <div class="mb-3">
-              <h4 class="text-sm font-bold text-gray-900">📊 월별 수입·지출·저축 추이</h4>
-              <p class="text-xs text-gray-400">최근 6개월간의 재무 밸런스</p>
-            </div>
-            <div class="h-64 relative">
-              <canvas id="dashTrendChart"></canvas>
-            </div>
-          </div>
-        </div>
-
-        <!-- 4. 최근 결제/거래 피드 -->
-        <div class="white-card p-6">
-          <div class="flex items-center justify-between mb-4">
-            <div>
-              <h4 class="text-sm font-bold text-gray-900">⏱️ 최근 거래 내역</h4>
-              <p class="text-xs text-gray-400">최근에 기록된 지출, 수입, 저축 내역</p>
-            </div>
-            <button onclick="switchTab('ledger')" class="text-xs font-semibold text-blue-600 hover:text-blue-700">
-              전체 가계부 보기 &rarr;
-            </button>
-          </div>
-          <div id="dashRecentFeed" class="space-y-2.5">
-            <!-- JS 동적 생성 -->
-          </div>
-        </div>
-      </section>
-
-      <!-- ======================================================== -->
-      <!-- TAB 2: 가계부 & 소비내역 (3·6·9·12개월 비교 리포트 완비)   -->
-      <!-- ======================================================== -->
-      <section id="tab_ledger" class="tab-content hidden space-y-6">
-
-        
-
-        <!-- 2. 월별 가계부 작성 및 조회 바 (통일 스타일: border-2 border-indigo-500 rounded-3xl) -->
-        <div class="white-card p-5 lg:p-6 space-y-4 border-2 border-indigo-500 rounded-3xl shadow-sm bg-white">
-          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-3 border-b border-gray-100">
-            <div>
-              <div class="flex items-center gap-2 mb-1">
-                <span class="px-3 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-600 border border-indigo-200">EXPENSE ANALYSIS</span>
-                <h2 class="text-lg font-bold text-gray-900">🧾 가계부 소비 내역 & 지출 분석</h2>
-              </div>
-              <p class="text-xs text-gray-500">카테고리별 지출 통계와 결제 수단별 상세 소비 내역을 꼼꼼하게 기록하고 분석합니다.</p>
-            </div>
-            <div class="flex items-center gap-2 flex-wrap">
-              <button onclick="saveAllChangesExplicitly()" class="btn-clean btn-save-glow btn-sm-clean shadow-sm font-bold rounded-xl px-3.5 py-2">
-                💾 수정한 금액 영구 저장
-              </button>
-              <button onclick="openAddTxModal('expense')" class="btn-clean btn-primary-clean btn-sm-clean shadow-sm font-bold rounded-xl px-3.5 py-2">
-                ➕ 새 내역 기록
-              </button>
-            </div>
-          </div>
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-gray-100">
-                        <div class="flex items-center gap-2 flex-wrap">
-              <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">조회 기간</span>
-              <button id="yearBtn_all" onclick="selectAllHistory()" class="btn-clean btn-secondary-clean btn-sm-clean shadow-sm font-bold text-blue-600">
-                📜 전체 내역 한눈에 보기
-              </button>
-              <button id="yearBtn_2026" onclick="selectYear('2026')" class="btn-clean btn-primary-clean btn-sm-clean shadow-sm font-bold">
-                📅 2026년
-              </button>
-              <button id="yearBtn_2027" onclick="selectYear('2027')" class="btn-clean btn-secondary-clean btn-sm-clean shadow-sm">
-                📅 2027년
-              </button>
-            </div>
-            <div class="flex items-center gap-2">
-              <button onclick="saveAllChangesExplicitly()" class="btn-clean btn-save-glow btn-sm-clean shadow-sm">
-                💾 수정한 금액 영구 저장
-              </button>
-              <button onclick="openAddTxModal('expense')" class="btn-clean btn-primary-clean btn-sm-clean shadow-sm">
-                ➕ 새 내역 기록
-              </button>
-            </div>
-          </div>
-
-          <!-- 12개월 빠른 버튼 바 -->
-          <div class="flex items-center gap-1.5 overflow-x-auto pb-1" id="monthButtonBar">
-            <!-- JS 동적 생성 -->
-          </div>
-        </div>
-
-        <select id="ledgerMonthSelect" class="hidden"></select>
-
-        <!-- 선택 월 요약 4개 카드 -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div class="white-card p-4 text-center">
-            <div class="text-xs text-gray-400 font-medium mb-1">총 수입</div>
-            <div id="ledgerTotalIncome" class="text-lg font-bold font-num text-emerald-600">0원</div>
-          </div>
-          <div class="white-card p-4 text-center">
-            <div class="text-xs text-gray-400 font-medium mb-1">총 지출(소비)</div>
-            <div id="ledgerTotalExpense" class="text-lg font-bold font-num text-red-500">0원</div>
-          </div>
-          <div class="white-card p-4 text-center">
-            <div class="text-xs text-gray-400 font-medium mb-1">저축 & 투자</div>
-            <div id="ledgerTotalSavings" class="text-lg font-bold font-num text-blue-600">0원</div>
-          </div>
-          <div class="white-card p-4 text-center">
-            <div class="text-xs text-gray-400 font-medium mb-1">소비 후 잔액</div>
-            <div id="ledgerNetBalance" class="text-lg font-bold font-num text-gray-800">0원</div>
-          </div>
-        </div>
-
-        <!-- 소비 분석 영역 (카테고리 도넛 & TOP 5 주요 지출처) -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div class="white-card p-6">
-            <h4 class="text-sm font-bold text-gray-900 mb-1">🍩 카테고리별 지출 분석</h4>
-            <p class="text-xs text-gray-400 mb-4">운동비, 병원, 약국, 여행자금 등 지출 비중</p>
-            <div class="h-64 relative">
-              <canvas id="ledgerCategoryChart"></canvas>
-            </div>
-          </div>
-
-          <div class="white-card p-6 flex flex-col justify-between">
-            <div>
-              <h4 class="text-sm font-bold text-gray-900 mb-1">🏆 이번 달 주요 지출처 TOP 5</h4>
-              <p class="text-xs text-gray-400 mb-4">가장 지출이 컸던 항목 순위</p>
-              <div id="ledgerTopExpenses" class="space-y-1">
-                <!-- JS 생성 -->
-              </div>
-            </div>
-            <div class="text-[11px] text-gray-400 pt-3 border-t border-gray-100 mt-4">
-              💡 모든 금액은 언제든 수정(✏️)하거나 삭제(🗑️)할 수 있으며, 새로고침해도 영구 유지됩니다.
-            </div>
-          </div>
-        </div>
-
-        <!-- 검색 및 필터 바 -->
-        <div class="white-card p-4 flex flex-col md:flex-row gap-3 items-center justify-between">
-          <div class="w-full md:w-80 relative">
-            <input type="text" id="ledgerSearchInput" placeholder="사용처, 항목명, 메모 검색..." class="input-clean text-sm pl-9">
-            <span class="absolute left-3 top-3 text-gray-400 text-sm">🔍</span>
-          </div>
-
-          <div class="flex items-center gap-2 w-full md:w-auto flex-wrap">
-            <select id="ledgerFilterType" class="input-clean text-xs w-auto">
-              <option value="all">모든 유형 (전체)</option>
-              <option value="expense">지출만</option>
-              <option value="income">수입만</option>
-              <option value="savings">저축만</option>
-              <option value="investment">투자만</option>
-            </select>
-
-            <select id="ledgerFilterCategory" class="input-clean text-xs w-auto">
-              <option value="all">모든 카테고리 (전체)</option>
-              <option value="여행자금">✈️ 여행자금 (적금과 별도)</option>
-              <option value="운동비/헬스">🏋️ 운동비/헬스</option>
-              <option value="병원/의원/치과">🏥 병원/의원/치과</option>
-              <option value="약국/영양제">💊 약국/영양제</option>
-              <option value="뷰티/미용/헤어">💄 뷰티/미용/헤어</option>
-              <option value="식비/마트/장보기">🍱 식비/마트/장보기</option>
-              <option value="카페/디저트">☕ 카페/디저트</option>
-              <option value="외식/배달음식">🛵 외식/배달음식</option>
-              <option value="주거/월세">🏠 주거/월세</option>
-              <option value="공과금/통신">💡 공과금/통신</option>
-              <option value="교통/이동">🚌 교통/이동</option>
-              <option value="쇼핑/생활용품">🛍️ 쇼핑/생활용품</option>
-              <option value="가구/인테리어">🪑 가구/인테리어</option>
-              <option value="문화/여가/데이트">🎬 문화/여가/데이트</option>
-              <option value="금융/적금/청약">💰 금융/적금/청약 (일반적금)</option>
-              <option value="주식/투자">📈 주식/투자</option>
-              <option value="급여/수입">💵 급여/수입</option>
-              <option value="비상금/기타">🚨 비상금/기타</option>
-            </select>
-
-            <select id="ledgerFilterAccount" class="input-clean text-xs w-auto text-blue-600 font-semibold">
-              <option value="all">모든 계좌</option>
-              <option value="토스뱅크">토스뱅크 (100053020337)</option>
-              <option value="카카오뱅크">카카오뱅크 (3333312626664)</option>
-              <option value="토스증권">토스증권 주식 계좌</option>
-              <option value="카카오 일본여행적금">카카오 일본여행적금</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- 거래 내역 테이블 -->
-        <div class="white-card overflow-hidden">
-          <div class="overflow-x-auto">
-            <table class="clean-table">
-              <thead>
-                <tr>
-                  <th>날짜</th>
-                  <th class="text-center">유형</th>
-                  <th>카테고리</th>
-                  <th>항목명 / 사용처</th>
-                  <th>결제계좌</th>
-                  <th class="text-right">금액</th>
-                  <th class="text-center">관리</th>
-                </tr>
-              </thead>
-              <tbody id="ledgerTxTableBody">
-                <!-- JS 동적 생성 -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-
-        <!-- 1. 기간별 재무 비교 리포트 (3개월, 6개월, 9개월, 12개월 비교!) -->
-        <div class="white-card p-6 border-l-4 border-blue-500 bg-gradient-to-r from-blue-50/40 via-white to-white space-y-5">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-gray-100">
-            <div>
-              <div class="flex items-center gap-2">
-                <span class="badge-clean badge-savings">기간 비교 분석</span>
-                <h3 class="text-base font-bold text-gray-900">📊 기간별 재무 비교 리포트 (3 · 6 · 9 · 12개월)</h3>
-              </div>
-              <p class="text-xs text-gray-500 mt-0.5">선택한 기간 동안 총 수입, 총 소비, 총 저축 및 카테고리별 지출을 꺾은선으로 비교합니다.</p>
-            </div>
-            
-            <!-- 기간 선택 필 (3, 6, 9, 12개월) -->
-            <div class="flex items-center gap-1.5 p-1 bg-gray-100 rounded-full">
-              <button onclick="changeComparisonPeriod(3)" id="btnPeriod3" class="period-pill active">최근 3개월</button>
-              <button onclick="changeComparisonPeriod(6)" id="btnPeriod6" class="period-pill">최근 6개월</button>
-              <button onclick="changeComparisonPeriod(9)" id="btnPeriod9" class="period-pill">최근 9개월</button>
-              <button onclick="changeComparisonPeriod(12)" id="btnPeriod12" class="period-pill">12개월 (1년)</button>
-            </div>
-          </div>
-
-          <!-- 선택 기간 요약 지표 카드 4개 -->
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div class="bg-white p-3.5 rounded-xl border border-gray-200 shadow-sm text-center">
-              <span class="text-xs text-gray-400 font-medium">선택 기간 총 수입</span>
-              <div id="periodSumIncome" class="text-lg font-bold font-num text-emerald-600 mt-1">0원</div>
-            </div>
-            <div class="bg-white p-3.5 rounded-xl border border-gray-200 shadow-sm text-center">
-              <span class="text-xs text-gray-400 font-medium">선택 기간 총 소비/지출</span>
-              <div id="periodSumExpense" class="text-lg font-bold font-num text-red-500 mt-1">0원</div>
-            </div>
-            <div class="bg-white p-3.5 rounded-xl border border-gray-200 shadow-sm text-center">
-              <span class="text-xs text-gray-400 font-medium">선택 기간 총 저축/투자</span>
-              <div id="periodSumSavings" class="text-lg font-bold font-num text-blue-600 mt-1">0원</div>
-            </div>
-            <div class="bg-white p-3.5 rounded-xl border border-gray-200 shadow-sm text-center">
-              <span class="text-xs text-gray-400 font-medium">평균 저축률</span>
-              <div id="periodAvgRate" class="text-lg font-bold font-num text-purple-600 mt-1">0%</div>
-            </div>
-          </div>
-
-          <!-- 꺾은선 비교 차트 (수입 vs 소비 vs 저축 추이) -->
-          <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-            <div class="flex items-center justify-between mb-2">
-              <h4 id="periodChartTitle" class="text-xs font-bold text-gray-700">📈 월별 수입·소비·저축 꺾은선 비교</h4>
-              <span class="text-[11px] text-gray-400">초록: 수입 · 빨강: 소비 · 파랑: 저축</span>
-            </div>
-            <div class="h-64 relative">
-              <canvas id="periodComparisonChart"></canvas>
-            </div>
-          </div>
-
-          <!-- 기간 내 카테고리별 어디에 얼마나 썼는지 비교 테이블 -->
-          <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-            <h4 class="text-xs font-bold text-gray-700 mb-2">📋 기간 내 카테고리별 지출 상세 집계</h4>
-            <div class="overflow-x-auto">
-              <table class="clean-table text-xs">
-                <thead>
-                  <tr>
-                    <th>카테고리</th>
-                    <th class="text-right">총 지출 금액</th>
-                    <th class="text-right">비중 (%)</th>
-                    <th>주요 사용처</th>
-                  </tr>
-                </thead>
-                <tbody id="periodCategoryTableBody">
-                  <!-- JS 생성 -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ======================================================== -->
-      <!-- TAB 3: 여행자금 전용 관리 (적금과 완전 분리!)             -->
-      <!-- ======================================================== -->
-      <section id="tab_travel" class="tab-content hidden space-y-6">
-
-        <!-- 여행자금 상단 컨트롤 바 (통일 스타일: border-2 border-teal-500 rounded-3xl) -->
-        <div class="white-card p-5 lg:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-2 border-teal-500 rounded-3xl shadow-sm bg-white">
-          <div>
-            <div class="flex items-center gap-2 mb-1">
-              <span class="px-3 py-0.5 rounded-full text-xs font-bold bg-teal-50 text-teal-600 border border-teal-200">TRAVEL & VACATION</span>
-              <h2 class="text-lg font-bold text-gray-900">✈️ 여행자금 관리 & 여행 다이어리</h2>
-            </div>
-            <p class="text-xs text-gray-500">적금과 분리된 순수 여행 자금 모으기 현황과 나만의 여행 다이어리 & 경비 기록입니다.</p>
-          </div>
-          <div class="flex items-center gap-2 flex-wrap">
-            <button onclick="openAddTravelFundModal()" class="btn-clean btn-primary-clean btn-sm-clean shadow-sm font-bold rounded-xl px-4 py-2">
-              ➕ 새 여행 프로젝트 추가
-            </button>
-            <button onclick="openAddTripModalDirect()" class="btn-clean btn-secondary-clean btn-sm-clean shadow-sm font-bold rounded-xl px-4 py-2">
-              📖 새 여행 다이어리 & 경비 작성
-            </button>
-          </div>
-        </div>
-
-        <!-- 1. 실시간 글로벌 여행 환율 전광판 (1번 사진과 100% 통일된 밝고 세련된 인디고 #6366f1 화이트 카드) -->
-        <div class="white-card p-6 bg-white rounded-3xl shadow-sm border-2 border-indigo-200 transition">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-gray-100">
-            <div class="flex items-center gap-3">
-              <span class="text-3xl p-2 bg-indigo-50 rounded-2xl border border-indigo-100">💱</span>
-              <div>
-                <div class="flex items-center gap-2">
-                  <h3 class="text-base font-extrabold text-gray-900">실시간 글로벌 여행 환율 전광판</h3>
-                  <span class="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-300 px-2.5 py-0.5 rounded-full font-mono font-extrabold flex items-center gap-1">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> LIVE CONNECTED
-                  </span>
+  function renderMockView() {
+    if (!mock.active) {
+      const histHtml = state.mockHistory.length
+        ? `<div style="margin-top:20px; text-align:left;">
+            <div style="font-weight:800; font-size:14px; margin-bottom:8px;">📊 최근 모의고사 기록</div>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              ${state.mockHistory.slice(0, 5).map(h => `
+                <div style="display:flex; justify-content:space-between; padding:8px 12px; background:var(--bg); border:1px solid var(--border); border-radius:8px; font-size:13px;">
+                  <span>${h.date}</span>
+                  <span><b>${h.avg}점</b> (${h.correct}/60) · <b style="color:${h.passed ? 'var(--success)' : 'var(--danger)'}">${h.passed ? '합격' : '불합격'}</b></span>
                 </div>
-                <p class="text-xs text-gray-500 mt-0.5">일본 엔화(JPY), 미국 달러(USD), 유럽 유로(EUR), 베트남 동(VND) 실시간 환율 연동</p>
-              </div>
+              `).join("")}
             </div>
-            <div class="flex items-center gap-2">
-              <span id="rateLastUpdated" class="text-xs text-gray-400 font-mono">갱신: 방금 전</span>
-              <button onclick="refreshExchangeRates()" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-bold py-1.5 px-3 rounded-xl shadow-xs transition flex items-center gap-1">
-                🔄 환율 갱신
-              </button>
-            </div>
+          </div>`
+        : "";
+
+      quizContainer.innerHTML = `
+        <div class="panel" style="text-align:center; padding:36px 22px;">
+          <h2 style="margin:0 0 8px;">📝 60문제 실전 모의고사</h2>
+          <p style="color:var(--muted); margin:0 0 20px;">
+            실제 시험과 동일하게 <b>3개 과목 각 20문항씩 총 60문항</b>(제한시간 60분)이 출제됩니다.<br/>
+            과목당 40점 이상, 전 과목 평균 60점 이상이면 합격입니다.
+          </p>
+          <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+            <button class="btn btn-primary" id="btnStartMockRandom" style="padding:11px 20px; font-size:15px;">🚀 새 모의고사 시작 (전체 랜덤)</button>
+            <button class="btn" id="btnStartMockUnsolved" style="padding:11px 20px; font-size:15px;">✨ 안 푼 문제 우선 출제</button>
           </div>
+          ${histHtml}
+        </div>
+      `;
+      document.getElementById("btnStartMockRandom").onclick = () => startMockExam(false);
+      document.getElementById("btnStartMockUnsolved").onclick = () => startMockExam(true);
+      return;
+    }
 
-          <!-- 주요 4대 통화 실시간 시세 카드 그리드 (1번 사진의 세련된 인디고 #6366f1 톤 통일) -->
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-            <!-- JPY 일본 엔화 -->
-            <div class="bg-gradient-to-b from-indigo-50/50 to-white p-4 rounded-2xl border border-indigo-100 hover:border-indigo-300 shadow-xs transition">
-              <div class="flex items-center justify-between text-xs text-gray-500 mb-1">
-                <span class="font-extrabold text-gray-800 flex items-center gap-1.5">🇯🇵 JPY (100엔)</span>
-                <span id="rateChangeJPY" class="text-emerald-600 text-[11px] font-bold">+0.32% ▲</span>
-              </div>
-              <div id="rateJPY" class="text-2xl font-extrabold font-num text-indigo-700 mt-1">914.85원</div>
-              <div class="text-[11px] text-gray-500 mt-1">10,000엔 = <span id="rateSubJPY" class="text-gray-800 font-bold">91,485원</span></div>
-            </div>
+    // Submitted summary view + review
+    let resultBannerHtml = "";
+    if (mock.submitted) {
+      let totalCorrect = 0;
+      const subjScores = SUBJECTS.map((s, sIdx) => {
+        let c = 0;
+        for (let i = sIdx * 20; i < (sIdx + 1) * 20; i++) {
+          if (mock.userAns[i] === mock.questions[i].answer) c++;
+        }
+        totalCorrect += c;
+        return { subject: s, correct: c, score: c * 5 };
+      });
+      const avg = Math.round((totalCorrect / 60) * 100);
+      const hasFail = subjScores.some(s => s.score < 40);
+      const passed = avg >= 60 && !hasFail;
 
-            <!-- USD 미국 달러 -->
-            <div class="bg-gradient-to-b from-indigo-50/50 to-white p-4 rounded-2xl border border-indigo-100 hover:border-indigo-300 shadow-xs transition">
-              <div class="flex items-center justify-between text-xs text-gray-500 mb-1">
-                <span class="font-extrabold text-gray-800 flex items-center gap-1.5">🇺🇸 USD (1달러)</span>
-                <span id="rateChangeUSD" class="text-rose-500 text-[11px] font-bold">-0.15% ▼</span>
-              </div>
-              <div id="rateUSD" class="text-2xl font-extrabold font-num text-blue-600 mt-1">1,386.20원</div>
-              <div class="text-[11px] text-gray-500 mt-1">100달러 = <span id="rateSubUSD" class="text-gray-800 font-bold">138,620원</span></div>
-            </div>
-
-            <!-- EUR 유럽 유로 -->
-            <div class="bg-gradient-to-b from-indigo-50/50 to-white p-4 rounded-2xl border border-indigo-100 hover:border-indigo-300 shadow-xs transition">
-              <div class="flex items-center justify-between text-xs text-gray-500 mb-1">
-                <span class="font-extrabold text-gray-800 flex items-center gap-1.5">🇪🇺 EUR (1유로)</span>
-                <span id="rateChangeEUR" class="text-emerald-600 text-[11px] font-bold">+0.08% ▲</span>
-              </div>
-              <div id="rateEUR" class="text-2xl font-extrabold font-num text-purple-600 mt-1">1,498.50원</div>
-              <div class="text-[11px] text-gray-500 mt-1">100유로 = <span id="rateSubEUR" class="text-gray-800 font-bold">149,850원</span></div>
-            </div>
-
-            <!-- VND 베트남 동 -->
-            <div class="bg-gradient-to-b from-indigo-50/50 to-white p-4 rounded-2xl border border-indigo-100 hover:border-indigo-300 shadow-xs transition">
-              <div class="flex items-center justify-between text-xs text-gray-500 mb-1">
-                <span class="font-extrabold text-gray-800 flex items-center gap-1.5">🇻🇳 VND (100동)</span>
-                <span id="rateChangeVND" class="text-gray-400 text-[11px] font-bold">0.00% -</span>
-              </div>
-              <div id="rateVND" class="text-2xl font-extrabold font-num text-emerald-600 mt-1">5.48원</div>
-              <div class="text-[11px] text-gray-500 mt-1">100만동 = <span id="rateSubVND" class="text-gray-800 font-bold">54,800원</span></div>
-            </div>
+      resultBannerHtml = `
+        <div class="result-banner ${passed ? "pass" : "fail"}">
+          <div style="font-size:24px; font-weight:900; color:${passed ? 'var(--success)' : 'var(--danger)'}">
+            ${passed ? "🎉 합격입니다!" : "😢 아쉽습니다 (불합격)"}
           </div>
-
-          <!-- 간편 환율 계산기 바 (세련된 화이트 & 인디고 스타일) -->
-          <div class="mt-4 p-3.5 bg-slate-50/80 rounded-2xl border border-indigo-100 flex flex-wrap items-center justify-between gap-3 text-xs">
-            <div class="flex items-center gap-2 flex-wrap">
-              <span class="text-gray-600 font-bold flex items-center gap-1">⚡ 빠른 환전 계산기:</span>
-              <input type="number" id="quickCalcInput" value="50000" oninput="calculateQuickExchange()" placeholder="금액 입력" class="w-28 py-1 px-2.5 bg-white border border-gray-300 focus:border-indigo-500 rounded-lg text-indigo-700 font-num font-bold text-right text-xs shadow-2xs">
-              <select id="quickCalcCurrency" onchange="calculateQuickExchange()" class="py-1 px-2 bg-white border border-gray-300 focus:border-indigo-500 rounded-lg text-gray-800 text-xs font-bold shadow-2xs">
-                <option value="JPY" selected>엔화 (JPY)</option>
-                <option value="USD">달러 (USD)</option>
-                <option value="EUR">유로 (EUR)</option>
-                <option value="VND">베트남동 (VND)</option>
-              </select>
-              <span class="text-gray-400 font-bold">=</span>
-              <span id="quickCalcResult" class="font-num font-extrabold text-indigo-600 text-sm">457,425원</span>
-            </div>
-            <div class="text-[11px] text-gray-400 font-medium">
-              * 외환 실시간 매매기준율 기준 (수수료 우대율 90% 반영)
-            </div>
+          <div style="font-size:16px; font-weight:700; margin-top:4px;">
+            총점 평균 <b>${avg}점</b> (${totalCorrect} / 60문항 정답)
+            ${hasFail ? " · <span style='color:var(--danger)'>과락 과목 있음 (40점 미만)</span>" : ""}
           </div>
-        </div>
-
-        <!-- 🧳 나만의 여행 책장 (한 줄에 여러 권 보기, 여행자금 전용 관리함 위 배치) -->
-        <div class="white-card p-6 border-2 border-amber-200/80 rounded-3xl shadow-sm bg-white">
-          <div class="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-gray-100">
-            <div class="flex items-center gap-2">
-              <span class="text-xl">📚</span>
-              <div>
-                <h4 class="text-base font-extrabold text-gray-900">🧳 여행 기록 히스토리 (나만의 여행 책장)</h4>
-                <p class="text-[11px] text-gray-500">책 표지를 눌러 최대 10장의 사진·글과 마지막 경비 엑셀을 바로 펼쳐볼 수 있습니다.</p>
-              </div>
-            </div>
-            <button onclick="openAddTripModalDirect()" class="btn-clean btn-amber-clean btn-sm-clean shadow-sm font-bold flex items-center gap-1.5">
-              ➕ 새 여행 책 만들기
-            </button>
-          </div>
-          <div id="travelTripsList" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3.5"></div>
-        </div>
-
-
-
-        <!-- 여행자금 히어로 배너 -->
-        <div class="white-card p-6 bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <div class="flex items-center gap-2 mb-1">
-                <span class="badge-clean badge-travel">일반 적금과 완전 분리</span>
-                <h3 class="text-lg font-bold text-gray-900">✈️ 여행자금 전용 관리함</h3>
-              </div>
-              <p class="text-xs text-gray-600">일반 적금과 별개로 순수 여행 목적 자금만 분리하여 모으고 관리합니다.</p>
-            </div>
-            <div class="flex items-center gap-2">
-              <button onclick="openAddTravelModal()" class="btn-clean btn-amber-clean btn-sm-clean shadow-sm">
-                ➕ 새 여행 목표 만들기
-              </button>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5">
-            <div class="bg-white p-4 rounded-xl border border-amber-200 shadow-sm">
-              <div class="text-xs text-gray-400 font-medium">총 적립된 여행자금</div>
-              <div id="travelTotalSaved" class="text-2xl font-bold font-num text-amber-600 mt-1">1,950,000원</div>
-              <div class="text-[11px] text-gray-500 mt-1">카카오 일본여행적금 + 세이프박스 적립</div>
-            </div>
-            <div class="bg-white p-4 rounded-xl border border-amber-200 shadow-sm">
-              <div class="text-xs text-gray-400 font-medium">여행 지출 총액</div>
-              <div id="travelTotalSpent" class="text-2xl font-bold font-num text-red-500 mt-1">0원</div>
-              <div class="text-[11px] text-gray-500 mt-1">항공권, 숙소 등 지출 집계</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 여행 프로젝트 카드 목록 (현재 모은돈 수정 & 삭제 버튼 완비!) -->
-        <div>
-          <div class="flex items-center justify-between mb-3">
-            <h4 class="text-sm font-bold text-gray-900">📋 진행 중인 여행 프로젝트</h4>
-          </div>
-          <div id="travelProjectsList" class="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <!-- JS 동적 생성 -->
-          </div>
-        </div>
-
-        <!-- 최근 여행자금 입출금 내역 -->
-        <div class="white-card p-6">
-          <h4 class="text-sm font-bold text-gray-900 mb-1">⏱️ 여행자금 거래 내역 히스토리</h4>
-          <p class="text-xs text-gray-400 mb-4">여행자금 카테고리로 기록된 적립 및 지출 피드</p>
-          <div id="travelHistoryFeed" class="space-y-2">
-            <!-- JS 동적 생성 -->
-          </div>
-        </div>
-
-      </section>
-
-      <!-- ======================================================== -->
-      <!-- TAB 4: 주식 & 토스증권 (이미지 4 모바일 토스 완벽 구현)   -->
-      <!-- ======================================================== -->
-      <section id="tab_stocks" class="tab-content hidden space-y-6">
-
-        <!-- 주식 & 토스증권 상단 컨트롤 바 (통일 스타일: border-2 border-blue-600 rounded-3xl) -->
-        <div class="white-card p-5 lg:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-2 border-blue-600 rounded-3xl shadow-sm bg-white">
-          <div>
-            <div class="flex items-center gap-2 mb-1">
-              <span class="px-3 py-0.5 rounded-full text-xs font-bold bg-blue-50 text-blue-600 border border-blue-300">TOSS SECURITIES</span>
-              <h2 class="text-lg font-bold text-gray-900">📈 주식 & 토스증권 투자 현황</h2>
-            </div>
-            <p class="text-xs text-gray-500">
-              국내 및 해외 주식 포트폴리오, 실시간 수익률, 배당금 및 원화 환산 평가액을 관리합니다.
-              <span class="font-mono text-xs text-blue-600 font-semibold ml-1">(토스증권 실시간 연동)</span>
-            </p>
-          </div>
-          <div class="flex items-center gap-2 flex-wrap">
-            <button id="btnRefreshStocks" onclick="refreshStockPrices()" class="btn-clean btn-primary-clean btn-sm-clean shadow-sm font-bold rounded-xl px-4 py-2">
-              🔄 실시간 시세 갱신
-            </button>
-            <button onclick="openAddStockModal()" class="btn-clean btn-secondary-clean btn-sm-clean shadow-sm font-bold rounded-xl px-4 py-2">
-              ➕ 보유 종목 추가
-            </button>
-          </div>
-        </div>
-
-        <!-- 토스증권 모바일 스타일 '내 투자' 메인 카드 (이미지 4 완벽 일치!) -->
-        <div class="white-card p-6 sm:p-8 shadow-md w-full border-2 border-blue-100 rounded-3xl">
-          <!-- 상단 헤더: 내 투자 & 총 평가금액 & 손익 -->
-          <div class="flex items-center justify-between pb-4 border-b border-gray-100">
-            <div>
-              <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">내 투자</span>
-              <div id="stocksTotalEval" class="text-3xl font-extrabold font-num text-gray-900 mt-1">1,610,853원</div>
-              <div id="stocksTotalProfit" class="text-sm font-bold font-num text-blue-600 mt-0.5">-76,859원 (4.55%)</div>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="text-xs font-semibold text-gray-400">평가금액 높은 순</span>
-              <div class="flex items-center gap-1 bg-gray-100 p-1 rounded-lg text-xs font-bold">
-                <span class="px-2 py-1 text-gray-400 rounded">현재가</span>
-                <span class="px-2 py-1 bg-white text-gray-800 rounded shadow-sm">평가금</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- 종목 카드 리스트 (QQQM, SPYM, SCHD, 엔비디아, IEF, 테슬라) -->
-          <div id="tossStocksListContainer" class="divide-y divide-gray-100 mt-1">
-            <!-- JS 동적 생성: 이미지 4와 100% 동일하게 생성 -->
-          </div>
-        </div>
-      </section>
-
-      <!-- ======================================================== -->
-      <!-- TAB 5: 계좌 & 보증금 프로젝트                            -->
-      <!-- ======================================================== -->
-      <section id="tab_accounts" class="tab-content hidden space-y-6">
-
-        <!-- 계좌 & 보증금 상단 컨트롤 바 (통일 스타일: border-2 border-sky-500 rounded-3xl) -->
-        <div class="white-card p-5 lg:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-2 border-sky-500 rounded-3xl shadow-sm bg-white">
-          <div>
-            <div class="flex items-center gap-2 mb-1">
-              <span class="px-3 py-0.5 rounded-full text-xs font-bold bg-sky-50 text-sky-600 border border-sky-200">ACCOUNTS & DEPOSIT</span>
-              <h2 class="text-lg font-bold text-gray-900">🏦 계좌 잔액 & 전월세 보증금 관리</h2>
-            </div>
-            <p class="text-xs text-gray-500">은행별 입출금·비상금 통장 잔액과 묶여있는 부동산 보증금을 안전하게 분리 관리합니다.</p>
-          </div>
-          <div class="flex items-center gap-2 flex-wrap">
-            <button onclick="saveAllChangesExplicitly()" class="btn-clean btn-save-glow btn-sm-clean shadow-sm font-bold rounded-xl px-4 py-2">
-              💾 수정한 금액 영구 저장
-            </button>
-            <button onclick="openAddAccountModal()" class="btn-clean btn-primary-clean btn-sm-clean shadow-sm font-bold rounded-xl px-4 py-2">
-              ➕ 새 계좌 추가
-            </button>
-          </div>
-        </div>
-
-        <!-- 보증금 분리 관리 카드 -->
-        <div class="white-card p-6 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-2xl">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-            <div>
-              <div class="flex items-center gap-2 mb-1">
-                <span class="badge-clean badge-deposit">원룸 임대차 보증금</span>
-                <h3 class="text-lg font-bold text-gray-900">🏠 보증금 프로젝트 (총 4,000만원)</h3>
-              </div>
-              <p class="text-xs text-gray-600">부모님 지원 3,000만원 + 본인 자금 1,000만원 분리 관리 (언제든 수정 가능)</p>
-            </div>
-            <button onclick="saveAllChangesExplicitly()" class="btn-clean btn-save-glow btn-sm-clean shadow-sm">
-              💾 수정한 금액 영구 저장
-            </button>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="bg-white p-4 rounded-xl border border-indigo-200 shadow-sm flex items-center justify-between">
-              <div>
-                <span class="text-xs text-gray-400 font-medium">내 보증금 (본인 자금 · 내 순자산 포함)</span>
-                <div id="accDepositSelf" class="text-2xl font-bold font-num text-emerald-600 mt-1">10,000,000원</div>
-                <div class="text-[11px] text-gray-500 mt-1">적금 만기로 직접 모아 납입 완료</div>
-              </div>
-              <button onclick="editMyDepositDirect()" class="btn-clean btn-secondary-clean btn-xs-clean">
-                ✏️ 수정
-              </button>
-            </div>
-
-            <div class="bg-white p-4 rounded-xl border border-indigo-200 shadow-sm flex items-center justify-between">
-              <div>
-                <span class="text-xs text-gray-400 font-medium">부모님 지원 보증금 (내 순자산 완전 제외)</span>
-                <div id="accDepositParents" class="text-2xl font-bold font-num text-indigo-600 mt-1">30,000,000원</div>
-                <div class="text-[11px] text-gray-500 mt-1">부모님 대여 지원금</div>
-              </div>
-              <button onclick="editParentsDepositDirect()" class="btn-clean btn-secondary-clean btn-xs-clean">
-                ✏️ 수정
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- 전체 계좌 및 적금 리스트 그리드 -->
-        <div>
-          <div class="flex items-center justify-between mb-3">
-            <div>
-              <h4 class="text-sm font-bold text-gray-900">💳 등록된 계좌 및 적금 목록</h4>
-              <p class="text-xs text-gray-400">일반 적금과 여행자금 적금이 분리되어 있습니다. '✏️ 금액 수정'으로 잔액을 변경할 수 있습니다.</p>
-            </div>
-          </div>
-          <div id="accountsListContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            <!-- JS 동적 생성 -->
-          </div>
-        </div>
-      </section>
-
-      <!-- ======================================================== -->
-      <!-- TAB 6: 50년 재무 로드맵 시뮬레이션                       -->
-      <!-- ======================================================== -->
-      <section id="tab_roadmap" class="tab-content hidden space-y-6">
-
-        <!-- 50년 재무 로드맵 상단 컨트롤 바 (통일 스타일: border-2 border-rose-500 rounded-3xl) -->
-        <div class="white-card p-5 lg:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-2 border-rose-500 rounded-3xl shadow-sm bg-white">
-          <div>
-            <div class="flex items-center gap-2 mb-1">
-              <span class="px-3 py-0.5 rounded-full text-xs font-bold bg-rose-50 text-rose-600 border border-rose-200">50-YEAR ROADMAP</span>
-              <h2 class="text-lg font-bold text-gray-900">🎯 2026 ~ 2075년 50개년 인생 재무 로드맵</h2>
-            </div>
-            <p class="text-xs text-gray-500">24세 1,500만원부터 73세 58.7억원까지의 복리 투자 및 목돈 성장 시뮬레이션입니다.</p>
-          </div>
-          <div class="flex items-center gap-2 flex-wrap">
-            <span class="badge-clean badge-income font-bold">월급 203만 · 저축률 50.9%</span>
-            <button onclick="saveAllChangesExplicitly()" class="btn-clean btn-save-glow btn-sm-clean shadow-sm font-bold rounded-xl px-4 py-2">
-              💾 로드맵 설정 저장
-            </button>
-          </div>
-        </div>
-
-        <div class="white-card p-6 rounded-2xl">
-          <div class="mb-4">
-            <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
-              🚀 2026 ~ 2075년 50개년 인생 재무 로드맵
-              <span class="badge-clean badge-income">월급 203만 · 저축률 50%</span>
-            </h3>
-            <p class="text-xs text-gray-500 mt-1">
-              24세 1,500만원부터 시작하여 73세 58.7억원까지의 복리 투자 및 목돈 성장 시뮬레이션입니다.
-            </p>
-          </div>
-          <div class="h-72 w-full mb-6">
-            <canvas id="roadmapChart"></canvas>
-          </div>
-        </div>
-
-        <div class="white-card overflow-hidden">
-          <div class="p-4 border-b border-gray-100">
-            <h4 class="text-sm font-bold text-gray-900">📊 연도별 나이 및 목표 목돈 상세표</h4>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="clean-table">
-              <thead>
-                <tr>
-                  <th>연도</th>
-                  <th>나이</th>
-                  <th class="text-right">기존 목돈+투자금</th>
-                  <th class="text-right">연간 저축액</th>
-                  <th class="text-right">누적 총 순자산</th>
-                </tr>
-              </thead>
-              <tbody id="roadmapTableBody">
-                <!-- JS 동적 생성 -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-    </main>
-
-    <!-- 푸터 -->
-    <footer class="bg-white border-t border-gray-200 py-5 text-center text-xs text-gray-400">
-      스마트 가계부 & 자산관리 시스템 · 핀테크 라이트 v3.5 · 모든 데이터는 사용자 PC에 영구 저장됩니다.
-    </footer>
-  </div>
-
-  <!-- ======================================================== -->
-  <!-- 3. 모달: 순자산 직접 수정 모달                          -->
-  <!-- ======================================================== -->
-  <div id="netWorthModal" class="modal-overlay-clean hidden">
-    <div class="modal-box-clean max-w-sm">
-      <div class="flex items-center justify-between pb-3 mb-4 border-b border-gray-100">
-        <h3 class="text-base font-bold text-gray-900">⭐️ 내 순수 순자산 직접 수정</h3>
-        <button onclick="closeNetWorthModal()" class="text-gray-400 hover:text-gray-600 font-bold text-lg">✕</button>
-      </div>
-      <p class="text-xs text-gray-500 mb-4">현재 계좌+주식 자동 합산값 대신 원하시는 순자산 금액을 고정하거나 재설정할 수 있습니다.</p>
-      
-      <div class="space-y-4">
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">내 순수 순자산 (원)</label>
-          <input type="text" id="inputCustomNetWorth" inputmode="numeric" placeholder="예: 29,443,514" oninput="formatCurrencyInput(this)" class="input-clean font-num text-lg font-bold">
-        </div>
-
-        <div class="flex items-center gap-2">
-          <button onclick="resetNetWorthToAuto()" class="btn-clean btn-secondary-clean flex-1 py-2.5 text-xs">
-            계좌 합산으로 자동 복원
-          </button>
-          <button onclick="saveCustomNetWorth()" class="btn-clean btn-primary-clean flex-1 py-2.5 text-xs shadow-md">
-            수정값 확정 저장
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ======================================================== -->
-  <!-- 4. 모달: 저축 목표 및 현재 달성액 수정 모달               -->
-  <!-- ======================================================== -->
-  <div id="goalModal" class="modal-overlay-clean hidden">
-    <div class="modal-box-clean max-w-sm">
-      <div class="flex items-center justify-between pb-3 mb-4 border-b border-gray-100">
-        <h3 class="text-base font-bold text-gray-900">🎯 저축 달성액 & 목표 수정</h3>
-        <button onclick="closeGoalModal()" class="text-gray-400 hover:text-gray-600 font-bold text-lg">✕</button>
-      </div>
-
-      <div class="space-y-4 text-sm">
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">2026년 최종 목표 금액 (원)</label>
-          <input type="text" id="inputGoalTarget" inputmode="numeric" placeholder="예: 15,000,000" oninput="formatCurrencyInput(this)" class="input-clean font-num font-bold">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">현재까지 모은 저축 달성액 (원)</label>
-          <input type="number" id="inputGoalCurrent" class="input-clean font-num font-bold text-emerald-600">
-        </div>
-
-        <div class="flex items-center gap-3 pt-2">
-          <button onclick="closeGoalModal()" class="btn-clean btn-secondary-clean flex-1 py-3 text-sm">
-            취소
-          </button>
-          <button onclick="saveGoalModal()" class="btn-clean btn-primary-clean flex-1 py-3 text-sm shadow-md font-bold">
-            수정 완료
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ======================================================== -->
-  <!-- 5. 모달: 기본 월급/수입 수정 모달                       -->
-  <!-- ======================================================== -->
-  <div id="salaryModal" class="modal-overlay-clean hidden">
-    <div class="modal-box-clean max-w-sm">
-      <div class="flex items-center justify-between pb-3 mb-4 border-b border-gray-100">
-        <h3 class="text-base font-bold text-gray-900">💵 기본 월급(수입) 설정</h3>
-        <button onclick="closeSalaryModal()" class="text-gray-400 hover:text-gray-600 font-bold text-lg">✕</button>
-      </div>
-      <p class="text-xs text-gray-500 mb-3">매월 기본으로 입력되는 월급 금액을 변경합니다.</p>
-
-      <div class="space-y-4">
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">기본 월급 실수령액 (원)</label>
-          <input type="text" id="inputDefaultSalary" inputmode="numeric" value="2,036,240" oninput="formatCurrencyInput(this)" class="input-clean font-num text-lg font-bold text-blue-600">
-        </div>
-
-        <div class="flex items-center gap-3 pt-2">
-          <button onclick="closeSalaryModal()" class="btn-clean btn-secondary-clean flex-1 py-3 text-sm">
-            취소
-          </button>
-          <button onclick="saveSalaryModal()" class="btn-clean btn-primary-clean flex-1 py-3 text-sm shadow-md font-bold">
-            변경 적용
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ======================================================== -->
-  <!-- 6. 모달: 거래 내역 작성/수정                             -->
-  <!-- ======================================================== -->
-  <div id="txModal" class="modal-overlay-clean hidden">
-    <div class="modal-box-clean">
-      <div class="flex items-center justify-between pb-3 mb-4 border-b border-gray-100">
-        <h3 id="txModalTitle" class="text-base font-bold text-gray-900">새 거래 내역 작성</h3>
-        <button onclick="closeTxModal()" class="text-gray-400 hover:text-gray-600 font-bold text-lg">✕</button>
-      </div>
-
-      <input type="hidden" id="txEditId">
-
-      <div class="space-y-4 text-sm">
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1">날짜</label>
-            <input type="date" id="txDate" class="input-clean">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1">유형</label>
-            <select id="txType" class="input-clean font-semibold">
-              <option value="expense">지출</option>
-              <option value="income">수입 (월급/입금)</option>
-              <option value="savings">저축 (적금/여행자금)</option>
-              <option value="investment">투자 (주식/펀드)</option>
-            </select>
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">세분화 카테고리</label>
-          <select id="txCategory" class="input-clean font-semibold">
-            <option value="급여/수입">💵 급여/수입 (정기 월급 2,036,240원, 상여, 부수입)</option>
-            <option value="여행자금">✈️ 여행자금 (일반 적금과 별도 분리!)</option>
-            <option value="운동비/헬스">🏋️ 운동비/헬스 (피트니스, PT, 필라테스)</option>
-            <option value="병원/의원/치과">🏥 병원/의원/치과 (진료비, 치료비, 검진)</option>
-            <option value="약국/영양제">💊 약국/영양제 (약값, 영양제, 건강식품)</option>
-            <option value="뷰티/미용/헤어">💄 뷰티/미용/헤어 (미용실, 피부과, 화장품)</option>
-            <option value="식비/마트/장보기">🍱 식비/마트/장보기 (이마트, 장보기, 식재료)</option>
-            <option value="카페/디저트">☕ 카페/디저트 (커피, 베이커리, 간식)</option>
-            <option value="외식/배달음식">🛵 외식/배달음식 (배민, 외식, 배달)</option>
-            <option value="주거/월세">🏠 주거/월세 (원룸 월세, 관리비)</option>
-            <option value="공과금/통신">💡 공과금/통신 (전기, 가스, 수도, 인터넷)</option>
-            <option value="교통/이동">🚌 교통/이동 (지하철, 버스, KTX, 택시)</option>
-            <option value="쇼핑/생활용품">🛍️ 쇼핑/생활용품 (옷, 패션, 생필품)</option>
-            <option value="가구/인테리어">🪑 가구/인테리어 (가구, 가전, 소품)</option>
-            <option value="문화/여가/데이트">🎬 문화/여가/데이트 (영화, 전시, 데이트비)</option>
-            <option value="금융/적금/청약">💰 금융/적금/청약 (일반 적금, 청년미래, 청약)</option>
-            <option value="주식/투자">📈 주식/투자 (토스증권 주식 매수, ISA)</option>
-            <option value="비상금/기타">🚨 비상금/기타 (비상금 보관, 기타)</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">항목명 / 사용처</label>
-          <input type="text" id="txName" placeholder="예: 헬스장 3개월 등록, 치과 치료비, 10월 월급" class="input-clean">
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">금액 (원)</label>
-          <input type="text" id="txAmount" inputmode="numeric" placeholder="예: 5,000" oninput="formatCurrencyInput(this)" class="input-clean font-num text-lg font-bold">
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">결제/입금 계좌</label>
-          <select id="txAccount" class="input-clean font-semibold">
-            <!-- JS 동적 생성 -->
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">메모 (선택사항)</label>
-          <input type="text" id="txMemo" placeholder="간단한 메모" class="input-clean">
-        </div>
-
-        <div class="flex items-center gap-3 pt-3">
-          <button onclick="closeTxModal()" class="btn-clean btn-secondary-clean flex-1 py-3 text-sm">
-            취소
-          </button>
-          <button onclick="saveTransaction()" class="btn-clean btn-primary-clean flex-1 py-3 text-sm shadow-md font-bold">
-            저장 완료
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ======================================================== -->
-  <!-- 7. 모달: 토스증권 주식 등록/수정                         -->
-  <!-- ======================================================== -->
-  <div id="stockModal" class="modal-overlay-clean hidden">
-    <div class="modal-box-clean max-w-md">
-      <div class="flex items-center justify-between pb-3 mb-4 border-b border-gray-100">
-        <h3 id="stockModalTitle" class="text-base font-bold text-gray-900">토스증권 주식 등록/수정</h3>
-        <button onclick="closeStockModal()" class="text-gray-400 hover:text-gray-600 font-bold text-lg">✕</button>
-      </div>
-
-      <input type="hidden" id="stockEditId">
-
-      <div class="space-y-4 text-sm">
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1">티커 / 종목코드</label>
-            <input type="text" id="stockTicker" placeholder="예: QQQM, SPYM, SCHD" class="input-clean uppercase font-mono font-bold">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1">종목명</label>
-            <input type="text" id="stockName" placeholder="예: QQQM, 엔비디아" class="input-clean font-semibold">
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1">보유수량 (주)</label>
-            <input type="number" step="any" id="stockQuantity" placeholder="예: 1.824722" class="input-clean font-num">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1">평가금액 (원)</label>
-            <input type="number" id="stockEvalAmount" placeholder="예: 690866" class="input-clean font-num font-bold">
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1">평가손익 금액 (원)</label>
-            <input type="number" id="stockProfitAmount" placeholder="예: -33833" class="input-clean font-num">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1">수익률 (%)</label>
-            <input type="number" step="any" id="stockProfitRate" placeholder="예: -4.66" class="input-clean font-num">
-          </div>
-        </div>
-
-        <div class="flex items-center gap-3 pt-3">
-          <button onclick="closeStockModal()" class="btn-clean btn-secondary-clean flex-1 py-3 text-sm">
-            취소
-          </button>
-          <button onclick="saveStock()" class="btn-clean btn-primary-clean flex-1 py-3 text-sm shadow-md font-bold">
-            저장
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ======================================================== -->
-  <!-- 8. 모달: 비밀번호 변경                                   -->
-  <!-- ======================================================== -->
-  <div id="changePasswordModal" class="modal-overlay-clean hidden">
-    <div class="modal-box-clean max-w-sm">
-      <div class="flex items-center justify-between pb-3 mb-4 border-b border-gray-100">
-        <h3 class="text-base font-bold text-gray-900">⚙️ 가계부 비밀번호 변경</h3>
-        <button onclick="closeChangePasswordModal()" class="text-gray-400 hover:text-gray-600 font-bold text-lg">✕</button>
-      </div>
-
-      <div class="space-y-4">
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">현재 비밀번호</label>
-          <input type="password" id="changePinOld" placeholder="현재 비밀번호" class="input-clean text-center font-mono text-lg">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">새 비밀번호 (4자리 이상)</label>
-          <input type="password" id="changePinNew" placeholder="새 암호" class="input-clean text-center font-mono text-lg">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">새 비밀번호 확인</label>
-          <input type="password" id="changePinConfirm" placeholder="한 번 더 입력" class="input-clean text-center font-mono text-lg">
-        </div>
-        <div id="changePinError" class="text-xs text-red-500 font-semibold text-center hidden"></div>
-
-        <div class="flex items-center gap-3 pt-2">
-          <button onclick="closeChangePasswordModal()" class="btn-clean btn-secondary-clean flex-1 py-3 text-sm">
-            취소
-          </button>
-          <button onclick="submitChangePassword()" class="btn-clean btn-primary-clean flex-1 py-3 text-sm shadow-md font-bold">
-            변경 완료
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ======================================================== -->
-  <!-- 9. 모달: 계좌 및 보증금 잔액 수정 모달                    -->
-  <!-- ======================================================== -->
-  <div id="accountModal" class="modal-overlay-clean hidden">
-    <div class="modal-box-clean max-w-sm">
-      <div class="flex items-center justify-between pb-3 mb-4 border-b border-gray-100">
-        <h3 id="accountModalTitle" class="text-base font-bold text-gray-900">계좌/보증금 금액 수정</h3>
-        <button onclick="closeAccountModal()" class="text-gray-400 hover:text-gray-600 font-bold text-lg">✕</button>
-      </div>
-
-      <input type="hidden" id="accountEditId">
-
-      <div class="space-y-4">
-        <div>
-          <div id="accountModalName" class="text-sm font-bold text-gray-800 mb-1">내 임차보증금 (본인 자금)</div>
-          <div id="accountModalMemo" class="text-xs text-gray-400 mb-3">원룸 전세/월세 보증금 본인 부담금</div>
-          
-          <label class="block text-xs font-semibold text-gray-600 mb-1">새 잔액 / 금액 (원)</label>
-          <input type="number" id="accountModalBalance" class="input-clean font-num text-xl font-extrabold text-blue-600" placeholder="숫자만 입력">
-        </div>
-
-        <!-- 빠른 금액 증감 버튼 -->
-        <div class="grid grid-cols-4 gap-1.5 pt-1">
-          <button type="button" onclick="adjustAccountModalBalance(1000000)" class="btn-clean btn-secondary-clean text-[11px] py-1.5">+100만</button>
-          <button type="button" onclick="adjustAccountModalBalance(5000000)" class="btn-clean btn-secondary-clean text-[11px] py-1.5">+500만</button>
-          <button type="button" onclick="adjustAccountModalBalance(10000000)" class="btn-clean btn-secondary-clean text-[11px] py-1.5">+1000만</button>
-          <button type="button" onclick="setAccountModalBalance(0)" class="btn-clean btn-secondary-clean text-[11px] py-1.5 text-gray-400">초기화</button>
-        </div>
-
-        <div class="pt-2 flex items-center gap-2">
-          <button onclick="closeAccountModal()" class="btn-clean btn-secondary-clean flex-1 py-3 text-sm">
-            취소
-          </button>
-          <button onclick="saveAccountModal()" class="btn-clean btn-primary-clean flex-1 py-3 text-sm shadow-md font-bold">
-            💾 영구 저장
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ======================================================== -->
-  <!-- 10. 모달: 여행 프로젝트 모은 돈 & 목표 수정               -->
-  <!-- ======================================================== -->
-  <div id="travelFundModal" class="modal-overlay-clean hidden">
-    <div class="modal-box-clean max-w-sm">
-      <div class="flex items-center justify-between pb-3 mb-4 border-b border-gray-100">
-        <h3 id="travelModalTitle" class="text-base font-bold text-gray-900">여행자금 정보 및 모은 돈 수정</h3>
-        <button onclick="closeTravelFundModal()" class="text-gray-400 hover:text-gray-600 font-bold text-lg">✕</button>
-      </div>
-
-      <input type="hidden" id="travelEditId">
-
-      <div class="space-y-4">
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">여행 프로젝트 이름</label>
-          <input type="text" id="travelModalTitleInput" class="input-clean font-semibold">
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">현재까지 모은 돈 (원)</label>
-          <input type="text" id="travelModalCurrentAmount" inputmode="numeric" placeholder="예: 1,000,000" oninput="formatCurrencyInput(this)" class="input-clean font-num text-xl font-extrabold text-amber-600">
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">최종 목표 금액 (원)</label>
-          <input type="text" id="travelModalTargetAmount" inputmode="numeric" placeholder="예: 2,000,000" oninput="formatCurrencyInput(this)" class="input-clean font-num text-base font-bold">
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">목표 달성 예정일</label>
-          <input type="date" id="travelModalTargetDate" class="input-clean text-xs">
-        </div>
-
-        <div class="pt-2 flex items-center gap-2">
-          <button onclick="closeTravelFundModal()" class="btn-clean btn-secondary-clean flex-1 py-3 text-sm">
-            취소
-          </button>
-          <button onclick="saveTravelFundModal()" class="btn-clean btn-amber-clean flex-1 py-3 text-sm shadow-md font-bold">
-            💾 영구 저장
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-  <!-- ======================================================== -->
-  <!-- 11. 모달: 나만의 여행 책 (책표지 + 10장 포토스토리 + 마지막 경비 엑셀 칸) -->
-  <!-- ======================================================== -->
-  <div id="tripModal" class="modal-overlay-clean hidden">
-    <div class="modal-box-clean" style="max-width: 860px; width: 96%; padding: 20px 24px;">
-      <!-- 상단 헤더 -->
-      <div class="flex items-center justify-between pb-3 mb-3 border-b border-gray-200">
-        <div class="flex items-center gap-2.5">
-          <span class="text-2xl">📚</span>
-          <div>
-            <h3 id="tripModalTitle" class="text-base sm:text-lg font-extrabold text-gray-900">나만의 여행 책 만들기</h3>
-            <p class="text-[11px] text-gray-500">책 표지 사진 설정 · 1~10장 사진과 글 작성 · 마지막 장 엑셀 경비 정산</p>
-          </div>
-        </div>
-        <button type="button" onclick="closeTripModal()" class="text-gray-400 hover:text-gray-700 font-bold text-xl px-2 py-1 rounded-lg hover:bg-gray-100 transition">✕</button>
-      </div>
-
-      <input type="hidden" id="tripEditId">
-      <input type="hidden" id="tripRegionId">
-      <input type="file" id="tripCoverFileInput" accept="image/*" class="hidden" onchange="handleBookCoverUpload(event)">
-      <input type="file" id="tripPagePhotoInput" accept="image/*" class="hidden" onchange="handleBookPagePhotoUpload(event)">
-
-      <!-- 📖 책 페이지 목차 네비게이션 바 (표지 + 1~10장 + 마지막 경비 엑셀) -->
-      <div id="bookPageNavBar" class="flex items-center gap-1.5 overflow-x-auto pb-2.5 mb-4 border-b border-gray-200 select-none">
-        <!-- JS renderBookPageNav() 동적 생성 -->
-      </div>
-
-      <!-- 책 본문 스크롤 영역 -->
-      <div class="max-h-[68vh] overflow-y-auto pr-1 space-y-4">
-
-        <!-- [페이지 0] 📕 책 표지 설정 & 여행 기본 정보 -->
-        <div id="bookSectionCover" class="space-y-4">
-          <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
-            <!-- 좌측: 실제 하드커버 책 표지 미리보기 -->
-            <div class="md:col-span-5 flex flex-col items-center">
-              <div id="bookCoverPreviewCard"
-                   onclick="document.getElementById('tripCoverFileInput').click()"
-                   class="relative w-full max-w-[260px] aspect-[3/4] rounded-r-2xl rounded-l-md shadow-xl border border-gray-200 overflow-hidden cursor-pointer group transition-transform hover:scale-[1.01]"
-                   style="background: linear-gradient(135deg, #10b981 0%, #0d9488 100%); box-shadow: -6px 6px 18px rgba(0,0,0,0.18), inset 8px 0 14px rgba(0,0,0,0.18);">
-                <!-- 책등(Spine) 효과 -->
-                <div class="absolute inset-y-0 left-0 w-3 bg-black/20 border-r border-white/20 z-10 pointer-events-none"></div>
-
-                <!-- 표지 사진 이미지 -->
-                <img id="bookCoverPreviewImg" src="" alt="책 표지 사진" class="hidden w-full h-full object-cover">
-
-                <!-- 표지 텍스트 오버레이 -->
-                <div id="bookCoverOverlay" class="absolute inset-0 flex flex-col justify-between p-5 pl-6 text-white bg-gradient-to-t from-black/70 via-black/20 to-black/30">
-                  <div class="flex items-center justify-between">
-                    <span id="bookCoverRegionBadge" class="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-white/25 backdrop-blur-xs">TRAVEL BOOK</span>
-                    <span class="text-xs opacity-90">✈️</span>
-                  </div>
-                  <div class="my-auto text-center">
-                    <div id="bookCoverEmptyHint" class="mb-3 bg-white/20 backdrop-blur-xs rounded-xl py-3 px-2 border border-white/30">
-                      <div class="text-2xl mb-1">📷</div>
-                      <div class="text-xs font-bold">클릭하여 책 표지<br>사진 넣기</div>
-                    </div>
-                  </div>
-                  <div>
-                    <h4 id="bookCoverTitleDisplay" class="text-lg font-extrabold leading-snug drop-shadow-md break-keep">나의 여행 이야기</h4>
-                    <p id="bookCoverDateDisplay" class="text-[11px] opacity-90 mt-1 font-medium">날짜 미정</p>
-                  </div>
-                </div>
-
-                <!-- 호버 시 변경 안내 -->
-                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center z-20">
-                  <span class="bg-white text-gray-900 text-xs font-extrabold px-3.5 py-2 rounded-full shadow-lg">📷 표지 사진 넣기 / 바꾸기</span>
+          <div class="result-scores">
+            ${subjScores.map(s => `
+              <div class="result-score-card">
+                <div style="font-size:12px; color:var(--muted); font-weight:700;">${s.subject}</div>
+                <div style="font-size:20px; font-weight:800; color:${s.score < 40 ? 'var(--danger)' : 'var(--text)'}">
+                  ${s.score}점 <span style="font-size:12px; font-weight:600;">(${s.correct}/20)</span>
                 </div>
               </div>
-
-              <!-- 표지 사진 버튼 그룹 -->
-              <div class="flex items-center gap-2 mt-3">
-                <button type="button" onclick="document.getElementById('tripCoverFileInput').click()" class="btn-clean btn-primary-clean text-xs py-1.5 px-3 rounded-lg font-bold shadow-xs">
-                  📷 표지 사진 넣기/바꾸기
-                </button>
-                <button type="button" id="btnRemoveBookCover" onclick="removeBookCoverImage()" class="hidden btn-clean btn-danger-clean text-xs py-1.5 px-2.5 rounded-lg font-bold">
-                  🗑️ 표지 삭제
-                </button>
-              </div>
-            </div>
-
-            <!-- 우측: 여행 책 기본 정보 입력 -->
-            <div class="md:col-span-7 space-y-3 bg-slate-50/70 p-4 rounded-2xl border border-gray-200">
-              <div>
-                <label class="block text-xs font-bold text-gray-700 mb-1">🎨 책 테마 색상</label>
-                <div class="flex items-center gap-2 flex-wrap" id="tripColorPalette">
-                  <label class="cursor-pointer flex items-center justify-center p-0.5 rounded-full"><input type="radio" name="tripColor" value="#10b981" checked onchange="updateBookCoverPreview()" class="sr-only peer"><span class="w-5 h-5 rounded-full bg-[#10b981] inline-block ring-2 ring-offset-1 ring-transparent peer-checked:ring-gray-900"></span></label>
-                  <label class="cursor-pointer flex items-center justify-center p-0.5 rounded-full"><input type="radio" name="tripColor" value="#06b6d4" onchange="updateBookCoverPreview()" class="sr-only peer"><span class="w-5 h-5 rounded-full bg-[#06b6d4] inline-block ring-2 ring-offset-1 ring-transparent peer-checked:ring-gray-900"></span></label>
-                  <label class="cursor-pointer flex items-center justify-center p-0.5 rounded-full"><input type="radio" name="tripColor" value="#3b82f6" onchange="updateBookCoverPreview()" class="sr-only peer"><span class="w-5 h-5 rounded-full bg-[#3b82f6] inline-block ring-2 ring-offset-1 ring-transparent peer-checked:ring-gray-900"></span></label>
-                  <label class="cursor-pointer flex items-center justify-center p-0.5 rounded-full"><input type="radio" name="tripColor" value="#8b5cf6" onchange="updateBookCoverPreview()" class="sr-only peer"><span class="w-5 h-5 rounded-full bg-[#8b5cf6] inline-block ring-2 ring-offset-1 ring-transparent peer-checked:ring-gray-900"></span></label>
-                  <label class="cursor-pointer flex items-center justify-center p-0.5 rounded-full"><input type="radio" name="tripColor" value="#ec4899" onchange="updateBookCoverPreview()" class="sr-only peer"><span class="w-5 h-5 rounded-full bg-[#ec4899] inline-block ring-2 ring-offset-1 ring-transparent peer-checked:ring-gray-900"></span></label>
-                  <label class="cursor-pointer flex items-center justify-center p-0.5 rounded-full"><input type="radio" name="tripColor" value="#f43f5e" onchange="updateBookCoverPreview()" class="sr-only peer"><span class="w-5 h-5 rounded-full bg-[#f43f5e] inline-block ring-2 ring-offset-1 ring-transparent peer-checked:ring-gray-900"></span></label>
-                  <label class="cursor-pointer flex items-center justify-center p-0.5 rounded-full"><input type="radio" name="tripColor" value="#f97316" onchange="updateBookCoverPreview()" class="sr-only peer"><span class="w-5 h-5 rounded-full bg-[#f97316] inline-block ring-2 ring-offset-1 ring-transparent peer-checked:ring-gray-900"></span></label>
-                  <label class="cursor-pointer flex items-center justify-center p-0.5 rounded-full"><input type="radio" name="tripColor" value="#f59e0b" onchange="updateBookCoverPreview()" class="sr-only peer"><span class="w-5 h-5 rounded-full bg-[#f59e0b] inline-block ring-2 ring-offset-1 ring-transparent peer-checked:ring-gray-900"></span></label>
-                  <label class="cursor-pointer flex items-center justify-center p-0.5 rounded-full"><input type="radio" name="tripColor" value="#334155" onchange="updateBookCoverPreview()" class="sr-only peer"><span class="w-5 h-5 rounded-full bg-[#334155] inline-block ring-2 ring-offset-1 ring-transparent peer-checked:ring-gray-900"></span></label>
-                </div>
-              </div>
-
-              <div>
-                <label class="block text-xs font-bold text-gray-700 mb-1">여행지 / 권역</label>
-                <select id="tripRegionSelect" onchange="onTripRegionSelectChange()" class="input-clean text-xs font-bold">
-                  <!-- JS 동적 채움 -->
-                </select>
-              </div>
-
-              <div>
-                <label class="block text-xs font-bold text-gray-700 mb-1">📕 책 제목 (여행 제목)</label>
-                <input type="text" id="tripTitleInput" oninput="updateBookCoverPreview()" class="input-clean font-bold" placeholder="예) 2026 제주도 힐링 3박 4일">
-              </div>
-
-              <div class="grid grid-cols-2 gap-2.5">
-                <div>
-                  <label class="block text-xs font-bold text-gray-700 mb-1">시작 날짜</label>
-                  <input type="date" id="tripStartDate" onchange="calculateTripDurationAuto(); updateBookCoverPreview();" class="input-clean text-xs">
-                </div>
-                <div>
-                  <label class="block text-xs font-bold text-gray-700 mb-1">종료 날짜</label>
-                  <input type="date" id="tripEndDate" onchange="calculateTripDurationAuto(); updateBookCoverPreview();" class="input-clean text-xs">
-                </div>
-              </div>
-
-              <div class="grid grid-cols-2 gap-2.5">
-                <div>
-                  <label class="block text-xs font-bold text-gray-700 mb-1">여행 기간</label>
-                  <input type="text" id="tripDurationInput" oninput="updateBookCoverPreview()" class="input-clean text-xs font-semibold" placeholder="예) 3박 4일">
-                </div>
-                <div>
-                  <label class="block text-xs font-bold text-gray-700 mb-1">총 사용 경비 (원)</label>
-                  <input type="text" id="tripTotalCost" readonly class="input-clean text-xs font-num font-extrabold text-red-600 bg-red-50/50" placeholder="마지막 장에서 자동합산">
-                </div>
-              </div>
-
-              <div class="grid grid-cols-2 gap-2.5">
-                <div>
-                  <label class="block text-xs font-bold text-gray-700 mb-1">🏨 숙소</label>
-                  <input type="text" id="tripLodgingInput" class="input-clean text-xs" placeholder="예) 신라호텔 / 감성 스테이">
-                </div>
-                <div>
-                  <label class="block text-xs font-bold text-gray-700 mb-1">🚆 교통수단</label>
-                  <input type="text" id="tripTransportInput" class="input-clean text-xs" placeholder="예) 항공편 + 렌터카">
-                </div>
-              </div>
-            </div>
+            `).join("")}
+          </div>
+          <div style="margin-top:14px; display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+            <button class="btn ${mock.onlyWrongReview ? '' : 'active'}" id="btnMockAllReview">전체 60문항 해설 보기</button>
+            <button class="btn ${mock.onlyWrongReview ? 'active' : ''}" id="btnMockWrongReview">틀린 문제만 보기 (${60 - totalCorrect}문항)</button>
+            <button class="btn btn-primary" id="btnMockRetry">🔄 새 모의고사 다시 풀기</button>
           </div>
         </div>
+      `;
+    }
 
-        <!-- [페이지 1 ~ 10] 📖 진짜 책 넘김 3D 포토북 내지 (사진 + 사진 밑에 글, 총 10장) -->
-        <div id="bookSectionPage" class="hidden book-stage relative px-2 sm:px-5 py-1">
-          <!-- 좌우 책장 넘김 플로팅 버튼 -->
-          <button type="button" id="btnSidePrevBook" onclick="navigateBookPage(-1)" class="book-side-flip-btn left-0" title="이전 장 넘기기 (◀)">‹</button>
-          <button type="button" id="btnSideNextBook" onclick="navigateBookPage(1)" class="book-side-flip-btn right-0" title="다음 장 넘기기 (▶)">›</button>
+    const qIdx = mock.currentIdx;
+    const q = mock.questions[qIdx];
+    const ua = mock.userAns[qIdx];
 
-          <div id="bookFlipContainer" class="book-open-spread p-4 sm:p-6">
-            <!-- 페이지 상단 바 -->
-            <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-4 border-b border-amber-200/70">
-              <div class="flex items-center gap-2">
-                <span id="bookPageNumberBadge" class="px-3 py-1 rounded-full bg-amber-500 text-white text-xs font-extrabold shadow-xs">제 1장 / 10장</span>
-                <span class="text-xs font-bold text-amber-900">좌우 화살표(‹ ›) 또는 키보드 방향키로 책처럼 넘겨보세요</span>
-              </div>
-              <div class="flex flex-wrap items-center gap-1.5">
-                <div id="bookPageSwapBox" class="hidden flex items-center gap-1 bg-amber-50 border border-amber-200 rounded-lg px-1.5 py-0.5">
-                  <button type="button" id="btnSwapPrevPage" onclick="swapBookPageRelative(-1)" class="text-[11px] font-bold text-amber-800 hover:bg-amber-200/60 px-1.5 py-1 rounded transition disabled:opacity-30" title="앞 장과 위치 바꾸기">◀</button>
-                  <select id="bookPageSwapSelect" class="text-[11px] font-bold text-amber-900 bg-transparent focus:outline-none cursor-pointer" title="바꿀 페이지 선택"></select>
-                  <button type="button" onclick="swapBookPageWithSelect()" class="text-[11px] font-extrabold text-amber-900 bg-amber-200/80 hover:bg-amber-300 px-2 py-1 rounded transition">🔄 위치 바꾸기</button>
-                  <button type="button" id="btnSwapNextPage" onclick="swapBookPageRelative(1)" class="text-[11px] font-bold text-amber-800 hover:bg-amber-200/60 px-1.5 py-1 rounded transition disabled:opacity-30" title="뒷 장과 위치 바꾸기">▶</button>
-                </div>
-                <button type="button" onclick="document.getElementById('tripPagePhotoInput').click()" class="btn-clean btn-primary-clean text-xs py-1.5 px-3 rounded-lg font-bold shadow-xs">
-                  📷 사진 넣기 / 바꾸기
-                </button>
-                <button type="button" id="btnRemovePagePhoto" onclick="removeCurrentBookPagePhoto()" class="hidden btn-clean btn-danger-clean text-xs py-1.5 px-2.5 rounded-lg font-bold">
-                  🗑️ 사진 삭제
-                </button>
-              </div>
-            </div>
-
-            <!-- 실제 펼쳐진 책의 두 페이지 (왼쪽: 사진, 오른쪽: 글 / 또는 상하) -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch relative z-10">
-              <!-- 왼쪽 페이지: 사진 액자 -->
-              <div class="flex flex-col justify-between bg-white/80 rounded-xl p-3 border border-amber-200/60 shadow-2xs">
-                <div id="bookPagePhotoDropzone"
-                     onclick="document.getElementById('tripPagePhotoInput').click()"
-                     class="w-full flex-1 min-h-[250px] max-h-[340px] bg-white border-2 border-dashed border-amber-300 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-amber-500 hover:bg-amber-50/30 transition overflow-hidden relative group p-2">
-                  <img id="bookPagePhotoImg" src="" alt="페이지 사진" class="hidden max-h-[315px] w-auto object-contain rounded-lg shadow-sm">
-                  <div id="bookPagePhotoEmpty" class="text-center py-8 px-4">
-                    <div class="text-4xl mb-2">🖼️</div>
-                    <div class="text-sm font-bold text-gray-700">클릭해서 사진을 넣어주세요</div>
-                    <div class="text-xs text-gray-400 mt-1">사진을 넣고 오른쪽/아래에 글을 적을 수 있어요</div>
-                  </div>
-                </div>
-                <div class="text-center text-[11px] font-serif text-amber-800/70 mt-2 select-none">✦ PHOTO PAGE ✦</div>
-              </div>
-
-              <!-- 오른쪽 페이지: 줄노트 글 적기 -->
-              <div class="flex flex-col justify-between bg-white rounded-xl p-4 border border-amber-200/70 shadow-2xs">
-                <div class="space-y-2.5 flex-1 flex flex-col">
-                  <input type="text" id="bookPageSubTitleInput" oninput="syncCurrentBookPageData()"
-                         class="w-full text-sm font-extrabold text-gray-900 border-b-2 border-amber-200/80 pb-2 focus:outline-none focus:border-amber-500 bg-transparent"
-                         placeholder="소제목 (예: Day 1 - 설레는 출발과 첫 끼!)">
-                  <textarea id="bookPageTextInput" oninput="syncCurrentBookPageData()"
-                            class="w-full flex-1 text-sm text-gray-800 focus:outline-none bg-transparent resize-none"
-                            style="min-height: 210px; background-image: repeating-linear-gradient(transparent, transparent 27px, #f1f5f9 28px); line-height: 28px;"
-                            placeholder="여기에 사진과 함께 남기고 싶은 여행 이야기, 느낌, 맛집 메모를 책처럼 자유롭게 적어보세요..."></textarea>
-                </div>
-                <div id="bookPageFooterNumber" class="text-center text-xs font-serif font-bold text-amber-900/70 mt-3 pt-2 border-t border-amber-100 select-none">
-                  — 1 / 10 —
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-
-
-        <!-- [마지막 칸 (페이지 11)] 📊 여행 경비 엑셀 정산표 ("어디에 이 금액을 썼다") -->
-        <div id="bookSectionExpense" class="hidden space-y-4">
-          <div class="bg-emerald-50/70 p-3.5 rounded-2xl border border-emerald-200 flex flex-wrap items-center justify-between gap-2">
-            <div>
-              <h4 class="text-sm font-extrabold text-emerald-950 flex items-center gap-1.5">
-                <span>📊</span> 마지막 칸: 여행 경비 정산 엑셀 표
-              </h4>
-              <p class="text-[11px] text-emerald-800 mt-0.5">각 항목의 금액과 <strong>맨 마지막 칸(어디에 이 금액을 썼다)</strong>에 지출 장소·내용을 엑셀처럼 적어보세요.</p>
-            </div>
-            <div class="flex items-center gap-3">
-              <div class="text-right">
-                <span class="text-[10px] text-gray-500 block font-bold">자동 합산 총 경비</span>
-                <div id="tripExpenseAutoTotal" class="text-lg font-extrabold font-num text-red-600">0원</div>
-              </div>
-              <button type="button" onclick="addBookExpenseRow()" class="btn-clean btn-primary-clean text-xs py-2 px-3 rounded-xl font-bold shadow-xs">
-                ➕ 칸 추가
-              </button>
-            </div>
-          </div>
-
-          <div class="overflow-x-auto border border-gray-300 rounded-xl shadow-xs bg-white">
-            <table class="w-full text-xs border-collapse">
-              <thead class="bg-slate-100 font-extrabold text-gray-800 border-b-2 border-gray-300">
-                <tr>
-                  <th class="p-2.5 text-left border-r border-gray-200 w-[22%]">구분 / 항목</th>
-                  <th class="p-2.5 text-right border-r border-gray-200 w-[20%]">금액 (원)</th>
-                  <th class="p-2.5 text-left border-r border-gray-200 w-[52%] bg-amber-50/70 text-amber-950">📝 어디에 이 금액을 썼다 (사용처 / 상세 내역)</th>
-                  <th class="p-2 text-center w-[6%]">삭제</th>
-                </tr>
-              </thead>
-              <tbody id="tripExpenseTableBody" class="divide-y divide-gray-200">
-                <!-- JS renderBookExpenseRows() 동적 생성 -->
-              </tbody>
-              <tfoot class="bg-amber-50/80 border-t-2 border-gray-300 font-extrabold text-sm">
-                <tr>
-                  <td class="p-3 text-gray-900 border-r border-gray-200">합계 총 사용 금액</td>
-                  <td id="tripExpenseTableTotalCell" class="p-3 text-right font-num text-red-600 border-r border-gray-200">0원</td>
-                  <td colspan="2" class="p-3 text-xs text-gray-500 font-semibold">입력하신 모든 금액이 자동으로 합산됩니다.</td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- 하단 책 넘김 + 저장 바 -->
-      <div class="pt-3 mt-4 border-t border-gray-200 flex flex-wrap items-center justify-between gap-2">
-        <div class="flex items-center gap-1.5">
-          <button type="button" id="btnBookPrevPage" onclick="navigateBookPage(-1)" class="btn-clean btn-secondary-clean text-xs py-2 px-3 rounded-xl font-bold">
-            ◀ 이전 장
-          </button>
-          <span id="bookPageIndicatorText" class="text-xs font-extrabold text-gray-600 px-2">표지</span>
-          <button type="button" id="btnBookNextPage" onclick="navigateBookPage(1)" class="btn-clean btn-secondary-clean text-xs py-2 px-3 rounded-xl font-bold">
-            다음 장 ▶
-          </button>
-        </div>
-
-        <div class="flex items-center gap-2">
-          <button type="button" onclick="closeTripModal()" class="btn-clean btn-secondary-clean py-2.5 px-4 text-xs sm:text-sm font-semibold rounded-xl">
-            닫기
-          </button>
-          <button type="button" onclick="saveTripModal()" class="btn-clean btn-amber-clean py-2.5 px-5 text-xs sm:text-sm shadow-md font-extrabold rounded-xl">
-            💾 여행 책 저장하기
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-
-
-  <!-- 토스트 알림 컴포넌트 -->
-  <div id="toastNotification" class="toast-clean">
-    <span id="toastIcon">✅</span>
-    <span id="toastText">알림 메시지</span>
-  </div>
-
-  <!-- 스크립트 연결 -->
-  <script src="data.js"></script>
-  <script src="app.js"></script>
-
-  <!-- 새 엑셀 배분 항목 추가 모달 -->
-  <div id="addExcelRowModal" class="modal-overlay-clean hidden">
-    <div class="modal-box-clean max-w-sm">
-      <div class="flex items-center justify-between pb-3 border-b border-gray-100">
-        <h3 class="text-base font-bold text-gray-900">새 배분 항목 추가</h3>
-        <button onclick="document.getElementById('addExcelRowModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600 font-bold text-lg">✕</button>
-      </div>
-
-      <div class="space-y-4 py-3">
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">항목명</label>
-          <input type="text" id="newExcelItemName" placeholder="예: 헬스장, 치아교정, 비상금" class="input-clean font-bold text-sm">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">예산 금액 (원)</label>
-          <input type="text" id="newExcelItemAmount" inputmode="numeric" placeholder="예: 5,000 또는 수식(=2000+3000)" oninput="formatCurrencyInput(this)" class="input-clean font-num text-lg font-bold">
-        </div>
-      </div>
-
-      <div class="flex items-center gap-3 pt-2">
-        <button onclick="document.getElementById('addExcelRowModal').classList.add('hidden')" class="btn-clean btn-secondary-clean flex-1 py-2.5 text-xs font-bold">취소</button>
-        <button onclick="submitAddExcelRow()" class="btn-clean btn-primary-clean flex-1 py-2.5 text-xs font-bold shadow-md">항목 추가</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ☁️ PC·모바일 실시간 동기화 (Firebase Realtime Database) 모달 -->
-  <div id="cloudSyncModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/45 backdrop-blur-xs p-4">
-    <div class="bg-white rounded-3xl w-full max-w-lg p-6 shadow-2xl border border-gray-200 space-y-4 max-h-[90vh] overflow-y-auto">
-      <div class="flex items-center justify-between border-b border-gray-100 pb-3">
-        <div>
-          <h3 class="text-base font-extrabold text-gray-900 flex items-center gap-2">
-            <span>☁️</span> PC · 모바일 실시간 자동 동기화
-          </h3>
-          <p class="text-[11px] text-gray-500 mt-0.5">Firebase 무료 실시간 DB를 연결하면 PC와 휴대폰이 실시간으로 똑같이 유지됩니다.</p>
-        </div>
-        <button type="button" onclick="closeCloudSyncModal()" class="text-gray-400 hover:text-gray-700 text-lg font-bold px-2">✕</button>
-      </div>
-
-      <div id="cloudSyncStatusBanner" class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-700 flex items-center justify-between">
-        <span id="cloudSyncStatusText">현재 상태: 연결되지 않음 (기기별 로컬 저장 중)</span>
-        <span id="cloudSyncLastTime" class="text-[10px] font-normal text-gray-400"></span>
-      </div>
-
-      <details class="bg-blue-50/70 border border-blue-200 rounded-xl p-3 text-xs text-blue-950">
-        <summary class="font-extrabold cursor-pointer select-none">📘 1분 만에 무료 Firebase DB 주소 만드는 법 (클릭해서 보기)</summary>
-        <ol class="list-decimal pl-4 mt-2 space-y-1 text-[11px] leading-relaxed">
-          <li><strong><a href="https://console.firebase.google.com" target="_blank" class="underline text-blue-700">console.firebase.google.com</a></strong> 에 구글 로그인 후 <strong>[프로젝트 추가]</strong> 클릭</li>
-          <li>왼쪽 메뉴 <strong>[빌드] → [Realtime Database] → [데이터베이스 만들기]</strong> 클릭 (싱가포르/미국 리전 선택 후 <strong>「테스트 모드에서 시작」</strong> 선택)</li>
-          <li>생성된 화면 맨 위의 주소(예: <code class="bg-white px-1 rounded">https://xxx-default-rtdb.asia-southeast1.firebasedatabase.app</code>)를 복사해 아래 칸에 붙여넣으세요!</li>
-        </ol>
-      </details>
-
-      <div class="space-y-3">
-        <div>
-          <label class="block text-xs font-bold text-gray-700 mb-1">Firebase Realtime Database URL</label>
-          <input type="url" id="cloudDbUrlInput" placeholder="예: https://my-ledger-default-rtdb.asia-southeast1.firebasedatabase.app"
-                 class="input-clean text-xs font-mono">
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-gray-700 mb-1">공용 방 이름 / 동기화 키 (PC·모바일 동일하게 입력)</label>
-          <input type="text" id="cloudSyncKeyInput" placeholder="예: my_ledger_0417"
-                 class="input-clean text-xs font-mono font-bold">
-          <p class="text-[10px] text-gray-400 mt-1">영문, 숫자, 밑줄(_)만 사용하세요. PC와 휴대폰에 같은 방 이름을 입력해야 서로 연결됩니다.</p>
-        </div>
-      </div>
-
-      <!-- 기존 클라우드 데이터 발견 시 선택 영역 -->
-      <div id="cloudSyncConflictBox" class="hidden p-3.5 rounded-2xl bg-amber-50 border border-amber-300 space-y-2.5">
-        <div class="text-xs font-extrabold text-amber-950">☁️ 클라우드에 이미 저장된 데이터가 있습니다! 어떻게 할까요?</div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <button type="button" onclick="resolveCloudInitialSync('pull')" class="btn-clean btn-primary-clean py-2 px-3 text-xs font-extrabold rounded-xl">
-            📥 클라우드 데이터 가져오기<br><span class="text-[10px] font-normal opacity-90">(모바일·새 기기 추천)</span>
-          </button>
-          <button type="button" onclick="resolveCloudInitialSync('push')" class="btn-clean btn-amber-clean py-2 px-3 text-xs font-extrabold rounded-xl">
-            📤 현재 기기 데이터로 덮어쓰기<br><span class="text-[10px] font-normal opacity-90">(PC 원본 올릴 때 추천)</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-gray-100">
-        <button type="button" onclick="connectCloudSync()" class="btn-clean btn-primary-clean flex-1 py-2.5 text-xs font-extrabold shadow-md">
-          🔗 연결 및 실시간 동기화 시작
+    let choicesHtml = "";
+    q.choices.forEach((cHtml, idx) => {
+      const cNum = idx + 1;
+      let cls = "choice-btn";
+      if (mock.submitted) {
+        if (cNum === q.answer) cls += " correct";
+        else if (ua === cNum && cNum !== q.answer) cls += " wrong";
+      } else if (ua === cNum) {
+        cls += " selected";
+      }
+      choicesHtml += `
+        <button class="${cls}" data-mock-choice="${cNum}">
+          <span class="choice-num">${cNum}</span>
+          <span>${cHtml}</span>
         </button>
-        <button type="button" id="btnCloudManualSync" onclick="manualCloudSyncNow()" class="hidden btn-clean btn-secondary-clean py-2.5 px-3 text-xs font-bold">
-          🔄 지금 동기화
-        </button>
-        <button type="button" id="btnCloudDisconnect" onclick="disconnectCloudSync()" class="hidden btn-clean btn-danger-clean py-2.5 px-3 text-xs font-bold">
-          연결 해제
-        </button>
-      </div>
-    </div>
-  </div>
+      `;
+    });
 
-  <!-- 🔐 금액 숨기기/보이기 암호 확인 모달 -->
-  <div id="hideAmountsAuthModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/45 backdrop-blur-xs p-4" onclick="if (event.target === this) closeHideAmountsAuthModal()">
-    <div class="bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl border border-gray-200 space-y-4">
-      <div class="flex items-center justify-between border-b border-gray-100 pb-3">
-        <h3 class="text-base font-extrabold text-gray-900 flex items-center gap-2">
-          <span>🔐</span> 금액 숨기기 / 보이기
-        </h3>
-        <button type="button" onclick="closeHideAmountsAuthModal()" class="text-gray-400 hover:text-gray-700 text-lg font-bold px-2">✕</button>
+    const expHtml = mock.submitted ? `
+      <div class="exp-box show">
+        <div class="exp-title">💡 정답 [${q.answer}번] 및 해설</div>
+        <div>${q.explanation || `<span class="exp-empty">등록된 해설이 없습니다. (정답: ${q.answer}번)</span>`}</div>
       </div>
-      <p class="text-xs text-gray-500 font-medium">계속하려면 암호를 입력한 뒤 Enter를 눌러주세요.</p>
-      <form onsubmit="event.preventDefault(); submitHideAmountsAuth();" class="space-y-3">
-        <input type="password" id="hideAmountsPasswordInput" autocomplete="off" placeholder="암호 입력"
-               onkeydown="handleHideAmountsAuthKeydown(event)"
-               class="input-clean text-center text-base font-bold tracking-wider py-2.5 bg-white border-2 border-blue-400 focus:border-blue-600 focus:outline-none w-full">
-        <div id="hideAmountsAuthError" class="hidden text-xs font-bold text-red-500 text-center">암호가 일치하지 않습니다.</div>
-        <div class="flex items-center gap-2 pt-1">
-          <button type="button" onclick="closeHideAmountsAuthModal()" class="btn-clean btn-secondary-clean flex-1 py-2.5 text-xs font-bold">취소 (ESC)</button>
-          <button type="submit" class="btn-clean btn-primary-clean flex-1 py-2.5 text-xs font-extrabold shadow-md">확인 (Enter)</button>
+    ` : "";
+
+    const omrSections = SUBJECTS.map((s, sIdx) => {
+      let cells = "";
+      for (let i = sIdx * 20; i < (sIdx + 1) * 20; i++) {
+        if (mock.onlyWrongReview && mock.submitted && mock.userAns[i] === mock.questions[i].answer) continue;
+        let cls = "omr-cell";
+        if (i === qIdx) cls += " current";
+        if (mock.submitted) {
+          cls += (mock.userAns[i] === mock.questions[i].answer) ? " is-correct" : " is-wrong";
+        } else if (mock.userAns[i]) {
+          cls += " answered";
+        }
+        cells += `<div class="${cls}" data-omr="${i}">${i + 1}</div>`;
+      }
+      return `<div class="omr-section-title">${s}</div><div class="omr-grid">${cells}</div>`;
+    }).join("");
+
+    quizContainer.innerHTML = `
+      ${resultBannerHtml}
+      <div class="mock-layout">
+        <div>
+          <div class="q-card">
+            <div class="q-meta">
+              <div class="q-badges">
+                <span class="badge subj">${q.subject}</span>
+                <span class="badge">모의고사 ${qIdx + 1} / 60</span>
+                <span class="badge">${q.examLabel} #${q.num}</span>
+              </div>
+              <button class="btn" data-bm="${q.id}">${state.bookmarks[q.id] ? "★ 북마크됨" : "☆ 북마크"}</button>
+            </div>
+            <div class="q-num-title"><span class="q-num">${qIdx + 1}.</span>${q.question}</div>
+            <div class="choices">${choicesHtml}</div>
+            ${expHtml}
+          </div>
+          <div class="cbt-nav">
+            <button class="btn" id="mockPrev" ${qIdx === 0 ? "disabled" : ""}>← 이전 문제</button>
+            <span style="font-size:13px; font-weight:700; color:var(--muted);">${qIdx + 1} / 60</span>
+            <button class="btn btn-primary" id="mockNext" ${qIdx >= 59 ? "disabled" : ""}>다음 문제 →</button>
+          </div>
         </div>
-      </form>
-    </div>
-  </div>
+
+        <div class="omr-panel">
+          <div class="omr-timer" id="mockTimerDisplay">${mock.submitted ? "채점 완료" : formatTime(mock.secondsLeft)}</div>
+          <div style="font-size:12px; color:var(--muted); text-align:center; margin-bottom:8px;">
+            답안 표기: <b>${Object.keys(mock.userAns).length} / 60</b>
+          </div>
+          ${omrSections}
+          <div style="margin-top:14px; display:flex; flex-direction:column; gap:7px;">
+            ${!mock.submitted ? `<button class="btn btn-success" id="btnSubmitMock" style="justify-content:center; padding:10px;">✅ 답안 제출 및 채점</button>` : ""}
+            <button class="btn btn-danger" id="btnExitMock" style="justify-content:center;">모의고사 종료</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Mock event bindings
+    if (mock.submitted) {
+      document.getElementById("btnMockAllReview").onclick = () => { mock.onlyWrongReview = false; render(); };
+      document.getElementById("btnMockWrongReview").onclick = () => {
+        mock.onlyWrongReview = true;
+        const firstWrong = mock.questions.findIndex((qq, i) => mock.userAns[i] !== qq.answer);
+        if (firstWrong >= 0) mock.currentIdx = firstWrong;
+        render();
+      };
+      document.getElementById("btnMockRetry").onclick = () => startMockExam(false);
+    } else {
+      document.getElementById("btnSubmitMock").onclick = () => submitMockExam(false);
+    }
+    document.getElementById("btnExitMock").onclick = () => {
+      if (!mock.submitted && !confirm("진행 중인 모의고사를 종료할까요?")) return;
+      if (mock.timerId) { clearInterval(mock.timerId); mock.timerId = null; }
+      mock.active = false;
+      render();
+    };
+    document.getElementById("mockPrev").onclick = () => { if (mock.currentIdx > 0) { mock.currentIdx--; render(); } };
+    document.getElementById("mockNext").onclick = () => { if (mock.currentIdx < 59) { mock.currentIdx++; render(); } };
+  }
+
+  function render() {
+    const isMock = (mode === "mock");
+    document.getElementById("filtersRow").style.display = isMock ? "none" : "grid";
+    document.getElementById("btnNavGrid").style.display = isMock ? "none" : "inline-flex";
+
+    if (isMock) {
+      document.getElementById("kbdHint").style.display = mock.active ? "block" : "none";
+      renderMockView();
+      return;
+    }
+
+    if (filtered.length === 0) {
+      quizContainer.innerHTML = `<div class="panel" style="text-align:center; padding:40px 20px; color:var(--muted);">조건에 맞는 문제가 없습니다. 필터를 변경해 보세요.</div>`;
+      return;
+    }
+
+    if (mode === "single") {
+      const q = filtered[currentIdx];
+      quizContainer.innerHTML = renderQuestionCard(q, currentIdx + 1, false) + `
+        <div class="cbt-nav">
+          <button class="btn" id="btnPrev" ${currentIdx === 0 ? "disabled" : ""}>← 이전 문제</button>
+          <span style="font-size:13px; font-weight:700; color:var(--muted);">${currentIdx + 1} / ${filtered.length}</span>
+          <button class="btn btn-primary" id="btnNext" ${currentIdx >= filtered.length - 1 ? "disabled" : ""}>다음 문제 →</button>
+        </div>
+      `;
+      document.getElementById("kbdHint").style.display = "block";
+      document.getElementById("btnPrev").onclick = () => { if (currentIdx > 0) { currentIdx--; render(); window.scrollTo({top:0, behavior:'smooth'}); } };
+      document.getElementById("btnNext").onclick = () => { if (currentIdx < filtered.length - 1) { currentIdx++; render(); window.scrollTo({top:0, behavior:'smooth'}); } };
+    } else {
+      document.getElementById("kbdHint").style.display = "none";
+      const totalPages = Math.ceil(filtered.length / LIST_PAGE_SIZE);
+      if (listPage > totalPages) listPage = totalPages;
+      const start = (listPage - 1) * LIST_PAGE_SIZE;
+      const slice = filtered.slice(start, start + LIST_PAGE_SIZE);
+
+      let html = slice.map((q, i) => renderQuestionCard(q, start + i + 1, showAllAnsInList)).join("");
+      html += `
+        <div class="pagination">
+          <button class="btn" id="pagePrev" ${listPage <= 1 ? "disabled" : ""}>← 이전 페이지</button>
+          <span style="font-size:13px; font-weight:700;">${listPage} / ${totalPages} 페이지 (총 ${filtered.length}문항)</span>
+          <button class="btn btn-primary" id="pageNext" ${listPage >= totalPages ? "disabled" : ""}>다음 페이지 →</button>
+        </div>
+      `;
+      quizContainer.innerHTML = html;
+      document.getElementById("pagePrev").onclick = () => { if (listPage > 1) { listPage--; render(); window.scrollTo({top:0, behavior:'smooth'}); } };
+      document.getElementById("pageNext").onclick = () => { if (listPage < totalPages) { listPage++; render(); window.scrollTo({top:0, behavior:'smooth'}); } };
+    }
+  }
+
+  // Event delegation inside quizContainer
+  quizContainer.addEventListener("click", (e) => {
+    const img = e.target.closest("img.q-img");
+    if (img) {
+      document.getElementById("zoomedImg").src = img.src;
+      document.getElementById("imgModal").classList.add("open");
+      return;
+    }
+
+    const mockChoice = e.target.closest("[data-mock-choice]");
+    if (mockChoice && mode === "mock" && mock.active && !mock.submitted) {
+      mock.userAns[mock.currentIdx] = Number(mockChoice.dataset.mockChoice);
+      render();
+      return;
+    }
+
+    const omrCell = e.target.closest("[data-omr]");
+    if (omrCell && mode === "mock" && mock.active) {
+      mock.currentIdx = Number(omrCell.dataset.omr);
+      render();
+      return;
+    }
+
+    const choiceBtn = e.target.closest(".choice-btn[data-qid]");
+    if (choiceBtn) {
+      const qid = Number(choiceBtn.dataset.qid);
+      const choice = Number(choiceBtn.dataset.choice);
+      state.answers[qid] = choice;
+      saveState();
+      updateStats();
+      render();
+      return;
+    }
+
+    const bmBtn = e.target.closest("[data-bm]");
+    if (bmBtn) {
+      const qid = Number(bmBtn.dataset.bm);
+      if (state.bookmarks[qid]) delete state.bookmarks[qid];
+      else state.bookmarks[qid] = true;
+      saveState();
+      updateStats();
+      render();
+      return;
+    }
+
+    const peekBtn = e.target.closest("[data-peek]");
+    if (peekBtn) {
+      const qid = Number(peekBtn.dataset.peek);
+      revealedSingle[qid] = !revealedSingle[qid];
+      render();
+      return;
+    }
+  });
+
+  function setActiveModeTab(id) {
+    ["modeSingleBtn", "modeListBtn", "modeMockBtn"].forEach(b => {
+      document.getElementById(b).classList.toggle("active", b === id);
+    });
+  }
+
+  document.getElementById("modeSingleBtn").onclick = () => {
+    mode = "single";
+    setActiveModeTab("modeSingleBtn");
+    document.getElementById("btnToggleAllAns").style.display = "none";
+    document.getElementById("btnReshuffle").style.display = (filterSort.value === "SHUFFLE") ? "inline-flex" : "none";
+    render();
+  };
+  document.getElementById("modeListBtn").onclick = () => {
+    mode = "list";
+    setActiveModeTab("modeListBtn");
+    document.getElementById("btnToggleAllAns").style.display = "inline-flex";
+    document.getElementById("btnReshuffle").style.display = (filterSort.value === "SHUFFLE") ? "inline-flex" : "none";
+    render();
+  };
+  document.getElementById("modeMockBtn").onclick = () => {
+    mode = "mock";
+    setActiveModeTab("modeMockBtn");
+    document.getElementById("btnToggleAllAns").style.display = "none";
+    document.getElementById("btnReshuffle").style.display = "none";
+    render();
+  };
+
+  document.getElementById("btnToggleAllAns").onclick = () => {
+    showAllAnsInList = !showAllAnsInList;
+    document.getElementById("btnToggleAllAns").textContent = showAllAnsInList ? "🙈 전체 정답/해설 숨기기" : "👁️ 전체 정답/해설 보이기";
+    render();
+  };
+  document.getElementById("btnReshuffle").onclick = () => applyFilters(false);
+
+  [filterSubject, filterYear, filterStatus, filterSort].forEach(el => {
+    el.addEventListener("change", () => applyFilters(false));
+  });
+  let searchTimer = null;
+  filterSearch.addEventListener("input", () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => applyFilters(false), 180);
+  });
+
+  document.getElementById("btnDarkMode").onclick = () => {
+    state.dark = !state.dark;
+    document.body.classList.toggle("dark", state.dark);
+    saveState();
+  };
+
+  document.getElementById("btnReset").onclick = () => {
+    if (confirm("지금까지의 풀이 기록, 북마크, 모의고사 기록을 모두 초기화할까요?")) {
+      state.answers = {};
+      state.bookmarks = {};
+      state.mockHistory = [];
+      revealedSingle = {};
+      saveState();
+      applyFilters(false);
+    }
+  };
+
+  const gridModal = document.getElementById("gridModal");
+  document.getElementById("btnNavGrid").onclick = () => {
+    document.getElementById("gridTotalCount").textContent = filtered.length;
+    const grid = document.getElementById("numGrid");
+    grid.innerHTML = filtered.map((q, idx) => {
+      const a = state.answers[q.id];
+      let cls = "num-cell";
+      if (mode === "single" && idx === currentIdx) cls += " current";
+      if (a) cls += (a === q.answer ? " is-correct" : " is-wrong");
+      if (state.bookmarks[q.id]) cls += " is-bookmarked";
+      return `<div class="${cls}" data-gidx="${idx}">${idx + 1}</div>`;
+    }).join("");
+    gridModal.classList.add("open");
+  };
+  document.getElementById("btnCloseGrid").onclick = () => gridModal.classList.remove("open");
+  gridModal.addEventListener("click", (e) => {
+    if (e.target === gridModal) gridModal.classList.remove("open");
+    const cell = e.target.closest("[data-gidx]");
+    if (cell) {
+      const idx = Number(cell.dataset.gidx);
+      if (mode === "single") currentIdx = idx;
+      else listPage = Math.floor(idx / LIST_PAGE_SIZE) + 1;
+      gridModal.classList.remove("open");
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (document.activeElement && ["INPUT", "SELECT", "TEXTAREA"].includes(document.activeElement.tagName)) return;
+    if (gridModal.classList.contains("open")) return;
+
+    if (mode === "mock" && mock.active) {
+      if (!mock.submitted && ["1", "2", "3", "4"].includes(e.key)) {
+        mock.userAns[mock.currentIdx] = Number(e.key);
+        render();
+      } else if (e.key === "ArrowRight" && mock.currentIdx < 59) {
+        mock.currentIdx++; render();
+      } else if (e.key === "ArrowLeft" && mock.currentIdx > 0) {
+        mock.currentIdx--; render();
+      }
+      return;
+    }
+
+    if (mode !== "single" || filtered.length === 0) return;
+    const q = filtered[currentIdx];
+    if (["1", "2", "3", "4"].includes(e.key)) {
+      state.answers[q.id] = Number(e.key);
+      saveState();
+      updateStats();
+      render();
+    } else if (e.key === "ArrowRight" && currentIdx < filtered.length - 1) {
+      currentIdx++; render(); window.scrollTo({top:0, behavior:'smooth'});
+    } else if (e.key === "ArrowLeft" && currentIdx > 0) {
+      currentIdx--; render(); window.scrollTo({top:0, behavior:'smooth'});
+    } else if (e.key === " ") {
+      e.preventDefault();
+      revealedSingle[q.id] = !revealedSingle[q.id];
+      render();
+    }
+  });
+
+  applyFilters(false);
+})();
+</script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
