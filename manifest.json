@@ -1,0 +1,16 @@
+{
+  "name": "내 자산 가계부 · 핀테크 라이트",
+  "short_name": "자산가계부",
+  "description": "스마트 월급 배분 가계부 & 여행 포토북",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='28' fill='%232563eb'/%3E%3Ctext x='64' y='84' font-size='64' text-anchor='middle'%3E%F0%9F%92%8E%3C/text%3E%3C/svg%3E",
+      "sizes": "128x128",
+      "type": "image/svg+xml"
+    }
+  ]
+}

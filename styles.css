@@ -1,0 +1,1178 @@
+/* =========================================================
+   스마트 자산 가계부 — 40년차 최고급 UX/UI 핀테크 라이트 에디션 v3.5
+   Pure White · Clean & Eye-Comfortable · Apple & Toss App Perfect Match
+   ========================================================= */
+
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+
+/* ── 1. 디자인 토큰 (Design Tokens) ─────────────────────── */
+:root {
+  /* Surface & Background */
+  --bg-app:        #f4f6fb;
+  --bg-surface:    #ffffff;
+  --bg-subtle:     #f8fafc;
+  --bg-muted:      #f1f5f9;
+  --bg-hover:      #f0f4fa;
+
+  /* Borders */
+  --border-light:  #edf2f7;
+  --border-subtle: #e2e8f0;
+  --border-focus:  #3182f6;
+
+  /* Typography Colors */
+  --text-main:     #191f28;   /* 깊고 선명한 핀테크 블랙 */
+  --text-body:     #333d4b;   /* 부드러운 본문 다크그레이 */
+  --text-sub:      #6b7684;   /* 세련된 서브텍스트 */
+  --text-muted:    #8b95a1;   /* 보조 캡션 */
+  --text-light:    #b0b8c1;   /* 비활성 텍스트 */
+
+  /* Toss Brand & Functional Colors */
+  --blue-primary:  #3182f6;   /* 토스 시그니처 블루 */
+  --blue-hover:    #1b64da;
+  --blue-bg:       #e8f3ff;
+  --blue-border:   #cce3ff;
+
+  --green-main:    #00c473;   /* 수입/순자산 민트그린 */
+  --green-bg:      #e6fbf2;
+  --green-border:  #b3f5d8;
+
+  --red-main:      #f04452;   /* 지출 코랄레드 */
+  --red-bg:        #ffebee;
+  --red-border:    #ffcdd2;
+
+  --amber-main:    #ff9800;   /* 여행자금 골든앰버 */
+  --amber-bg:      #fff8e1;
+  --amber-border:  #ffe082;
+
+  --purple-main:   #8b5cf6;   /* 투자/주식 바이올렛 */
+  --purple-bg:     #f5f3ff;
+  --purple-border: #ddd6fe;
+
+  --teal-main:     #0ea5e9;   /* 운동비 스카이블루 */
+  --teal-bg:       #f0f9ff;
+  --teal-border:   #bae6fd;
+
+  --indigo-main:   #6366f1;   /* 보증금 인디고 */
+  --indigo-bg:     #eef2ff;
+  --indigo-border: #c7d2fe;
+
+  /* Elevation Shadows */
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
+  --shadow-md:  0 4px 14px -2px rgba(18,38,63,0.07), 0 2px 6px -1px rgba(18,38,63,0.04);
+  --shadow-lg:  0 12px 30px -4px rgba(18,38,63,0.08), 0 4px 12px -2px rgba(18,38,63,0.04);
+  --shadow-xl:  0 24px 50px -10px rgba(18,38,63,0.12), 0 8px 20px -4px rgba(18,38,63,0.06);
+
+  /* Radius */
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+}
+
+/* ── 2. 기본 초기화 ───────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── 글자 크기 조절 시스템 (반응형 rem 스케일링) ── */
+html, html.font-size-large {
+  font-size: 16px; /* 기본 크기: 한눈에 시원하고 잘 보이도록 확대 (사용자 요청 반영) */
+}
+html.font-size-normal {
+  font-size: 14.5px; /* 보통 */
+}
+html.font-size-small {
+  font-size: 13px; /* 작게 */
+}
+html.font-size-xlarge {
+  font-size: 18px; /* 아주 크게 */
+}
+html.font-size-huge {
+  font-size: 20px; /* 최대 크기 */
+}
+
+/* 엑셀 시트 테이블 전용 글자 크기 & 시인성 대폭 강화 */
+.excel-merchant-input {
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  color: #0f172a !important;
+}
+.excel-merchant-input::placeholder {
+  color: #94a3b8 !important;
+  font-weight: 500 !important;
+  font-size: 0.88rem !important;
+}
+
+body {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 커스텀 스크롤바 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+::selection {
+  background: var(--blue-primary);
+  color: #ffffff;
+}
+
+/* ── 3. 카드 컴포넌트 ─────────────────────────────────── */
+.white-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+/* 통일된 둥근 테두리 헤더 카드 스타일 (사용자 요청 디자인 100% 보장) */
+.white-card.border-2 { border-width: 2px !important; }
+.white-card.rounded-3xl { border-radius: 1.5rem !important; }
+.white-card.border-emerald-500 { border-color: #10b981 !important; }
+.white-card.border-blue-500 { border-color: #3b82f6 !important; }
+.white-card.border-blue-600 { border-color: #2563eb !important; }
+.white-card.border-indigo-500 { border-color: #6366f1 !important; }
+.white-card.border-teal-500 { border-color: #14b8a6 !important; }
+.white-card.border-sky-500 { border-color: #0ea5e9 !important; }
+.white-card.border-rose-500 { border-color: #f43f5e !important; }
+
+.white-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: #dbe4ef;
+}
+
+/* ── 4. 잠금 화면 (White Frosted Apple/Toss Style) ─────── */
+#lockScreen {
+  background: linear-gradient(135deg, #f8fafc 0%, #edf2f7 50%, #f1f5f9 100%);
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.lock-card {
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 28px;
+  box-shadow: 0 20px 60px -15px rgba(24, 39, 75, 0.15),
+              0 0 0 1px rgba(226, 232, 240, 0.8);
+  width: 100%;
+  max-width: 360px;
+  padding: 36px 28px;
+  text-align: center;
+}
+
+.lock-badge-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #3182f6 0%, #1b64da 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  margin: 0 auto 16px auto;
+  box-shadow: 0 12px 28px rgba(49, 130, 246, 0.35);
+  animation: floatSoft 3s ease-in-out infinite;
+}
+
+@keyframes floatSoft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+/* 화이트 키패드 버튼 */
+.keypad-btn-white {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  font-size: 22px;
+  font-weight: 600;
+  background: #ffffff;
+  color: var(--text-main);
+  border: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  transition: all 0.15s ease;
+  user-select: none;
+  cursor: pointer;
+}
+
+.keypad-btn-white:hover {
+  background: var(--bg-subtle);
+  transform: scale(1.04);
+  border-color: var(--border-subtle);
+}
+
+.keypad-btn-white:active {
+  background: var(--blue-bg);
+  color: var(--blue-primary);
+  border-color: var(--blue-primary);
+  transform: scale(0.95);
+}
+
+/* ── 5. 네비게이션 헤더 & 탭 ───────────────────────────── */
+header.app-header {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-light);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+.nav-tab-pill {
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-sub);
+  background: transparent;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.nav-tab-pill:hover {
+  color: var(--text-main);
+  background: #ffffff;
+  border-color: var(--border-light);
+  box-shadow: var(--shadow-sm);
+}
+
+.nav-tab-pill.active {
+  color: #ffffff;
+  background: var(--blue-primary);
+  border-color: var(--blue-primary);
+  box-shadow: 0 4px 12px rgba(49, 130, 246, 0.35);
+}
+
+/* ── 6. 숫자 & 폰트 ───────────────────────────────────── */
+.font-num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  letter-spacing: -0.02em;
+}
+
+/* ── 7. 배지 시스템 ───────────────────────────────────── */
+.badge-clean {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.badge-income    { background: var(--green-bg);  color: #059669; border: 1px solid var(--green-border); }
+.badge-expense   { background: var(--red-bg);    color: #e11d48; border: 1px solid var(--red-border); }
+.badge-savings   { background: var(--blue-bg);   color: #2563eb; border: 1px solid var(--blue-border); }
+.badge-investment{ background: var(--purple-bg); color: #7c3aed; border: 1px solid var(--purple-border); }
+.badge-travel    { background: var(--amber-bg);  color: #d97706; border: 1px solid var(--amber-border); }
+.badge-fitness   { background: var(--teal-bg);   color: #0284c7; border: 1px solid var(--teal-border); }
+.badge-deposit   { background: var(--indigo-bg); color: #4f46e5; border: 1px solid var(--indigo-border); }
+
+/* ── 8. 버튼 시스템 ───────────────────────────────────── */
+.btn-clean {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+}
+
+.btn-primary-clean {
+  background: var(--blue-primary);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(49, 130, 246, 0.25);
+}
+.btn-primary-clean:hover {
+  background: var(--blue-hover);
+  box-shadow: 0 6px 16px rgba(49, 130, 246, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-secondary-clean {
+  background: #ffffff;
+  color: var(--text-body);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-sm);
+}
+.btn-secondary-clean:hover {
+  background: var(--bg-subtle);
+  border-color: #cbd5e1;
+  color: var(--text-main);
+  transform: translateY(-1px);
+}
+
+.btn-danger-clean {
+  background: var(--red-bg);
+  color: #e11d48;
+  border: 1px solid var(--red-border);
+}
+.btn-danger-clean:hover {
+  background: #f04452;
+  color: #ffffff;
+  border-color: transparent;
+}
+
+.btn-success-clean {
+  background: var(--green-bg);
+  color: #059669;
+  border: 1px solid var(--green-border);
+}
+.btn-success-clean:hover {
+  background: #00c473;
+  color: #ffffff;
+  border-color: transparent;
+}
+
+.btn-amber-clean {
+  background: var(--amber-bg);
+  color: #b45309;
+  border: 1px solid var(--amber-border);
+}
+.btn-amber-clean:hover {
+  background: #ff9800;
+  color: #ffffff;
+  border-color: transparent;
+}
+
+.btn-save-glow {
+  background: linear-gradient(135deg, #00c473 0%, #059669 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 196, 115, 0.35);
+}
+.btn-save-glow:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 196, 115, 0.45);
+}
+
+.btn-sm-clean { padding: 6px 12px; font-size: 12px; border-radius: var(--radius-xs); }
+.btn-xs-clean { padding: 4px 8px;  font-size: 11px; border-radius: 6px; }
+
+/* ── 9. 입력 폼 ───────────────────────────────────────── */
+.input-clean {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: #ffffff;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.15s ease;
+  outline: none;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
+}
+
+.input-clean:hover {
+  border-color: #cbd5e1;
+}
+
+.input-clean:focus {
+  border-color: var(--blue-primary);
+  box-shadow: 0 0 0 3px rgba(49, 130, 246, 0.15);
+}
+
+.input-clean::placeholder {
+  color: var(--text-muted);
+}
+
+/* ── 10. 프로그레스 바 ────────────────────────────────── */
+.progress-clean-track {
+  height: 8px;
+  background: var(--bg-muted);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-clean-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #3182f6 0%, #00c473 100%);
+  transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-clean-fill::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 60px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: shimmerLight 2.5s ease-in-out infinite;
+}
+
+@keyframes shimmerLight {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+/* ── 11. 화이트 테이블 ────────────────────────────────── */
+.clean-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.clean-table thead tr {
+  background: #f8fafc;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.clean-table th {
+  padding: 12px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-sub);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.clean-table td {
+  padding: 14px 16px;
+  font-size: 13.5px;
+  color: var(--text-body);
+  border-bottom: 1px solid var(--border-light);
+  vertical-align: middle;
+}
+
+.clean-table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.clean-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.clean-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ── 12. 12개월 빠른 버튼 바 ──────────────────────────── */
+.month-pill-btn {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  border: 1px solid var(--border-light);
+  background: #ffffff;
+  color: var(--text-sub);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.month-pill-btn:hover {
+  background: var(--bg-subtle);
+  border-color: #cbd5e1;
+  color: var(--text-main);
+}
+
+.month-pill-btn.active {
+  background: var(--blue-primary);
+  color: #ffffff;
+  border-color: var(--blue-primary);
+  box-shadow: 0 3px 10px rgba(49, 130, 246, 0.35);
+}
+
+/* ── 13. 토스증권 주식 카드 UI (이미지 4 모바일 토스 완벽 구현) ─ */
+.toss-stock-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background-color 0.15s ease;
+  background: #ffffff;
+}
+.toss-stock-card:last-child {
+  border-bottom: none;
+}
+.toss-stock-card:hover {
+  background-color: #f8fafc;
+}
+
+.toss-stock-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.15;
+  color: #ffffff;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+/* ── 14. 기간 비교 필 버튼 (3, 6, 9, 12개월) ────────────── */
+.period-pill {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid var(--border-light);
+  background: #ffffff;
+  color: var(--text-sub);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.period-pill:hover {
+  border-color: #cbd5e1;
+  color: var(--text-main);
+}
+.period-pill.active {
+  background: var(--blue-primary);
+  color: #ffffff;
+  border-color: var(--blue-primary);
+  box-shadow: 0 2px 8px rgba(49,130,246,0.3);
+}
+
+/* ── 15. 토스트 알림 ──────────────────────────────────── */
+.toast-clean {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  font-size: 13.5px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-xl);
+  transform: translateY(16px);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast-clean.show {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: all;
+}
+
+.toast-clean.success { border-left: 4px solid var(--green-main); color: var(--text-main); }
+.toast-clean.error   { border-left: 4px solid var(--red-main); color: var(--text-main); }
+.toast-clean.info    { border-left: 4px solid var(--blue-primary); color: var(--text-main); }
+
+/* ── 16. 모달 오버레이 ────────────────────────────────── */
+.modal-overlay-clean {
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-box-clean {
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 25px 60px -15px rgba(18, 38, 63, 0.2), 0 0 0 1px rgba(0,0,0,0.04);
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 28px;
+  animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalPop {
+  0% { transform: scale(0.96) translateY(8px); opacity: 0; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hidden { display: none !important; }
+
+/* ── 17. 카테고리별 차별화된 뱃지 태그 스타일 ─────────────── */
+.badge-travel-tag {
+  background-color: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+}
+.badge-rent-tag {
+  background-color: #e0e7ff;
+  color: #4338ca;
+  border: 1px solid #c7d2fe;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+}
+.badge-hospital-tag {
+  background-color: #ccfbf1;
+  color: #0f766e;
+  border: 1px solid #99f6e4;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+}
+.badge-pharmacy-tag {
+  background-color: #ffe4e6;
+  color: #be123c;
+  border: 1px solid #fecdd3;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+}
+.badge-food-tag {
+  background-color: #ffedd5;
+  color: #c2410c;
+  border: 1px solid #fed7aa;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+}
+.badge-utility-tag {
+  background-color: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+}
+.badge-exercise-tag {
+  background-color: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+}
+
+/* ── 18. 여행 지도 & 발자취 스타일 ───────────────────────── */
+.country-filter-pill {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid var(--border-light);
+  background: #ffffff;
+  color: var(--text-sub);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+.country-filter-pill:hover {
+  background: #f8fafc;
+  color: var(--text-main);
+  border-color: #cbd5e1;
+}
+.country-filter-pill.active {
+  background: #ff9800;
+  color: #ffffff;
+  border-color: #ff9800;
+  box-shadow: 0 3px 10px rgba(255, 152, 0, 0.35);
+}
+
+.map-region-tile {
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+.map-region-tile:hover {
+  transform: translateY(-2px);
+  border-color: #cbd5e1;
+  box-shadow: var(--shadow-md);
+}
+
+/* 방문한 곳: 색칠 & 하이라이트 */
+.map-region-tile.visited {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  border-color: #10b981;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.15);
+}
+.map-region-tile.visited:hover {
+  border-color: #059669;
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.25);
+}
+
+.map-region-tile.active-select {
+  outline: 3px solid #ff9800;
+  outline-offset: 2px;
+}
+
+.trip-expense-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 11.5px;
+  font-weight: 600;
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+}
+
+.trip-photo-thumb {
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.trip-photo-thumb:hover {
+  transform: scale(1.08);
+}
+
+
+
+/* ======================================================== */
+/* 잠금화면 완전 방어 스타일 (어떤 환경에서도 중앙 화이트 카드 유지) */
+/* ======================================================== */
+#lockScreen {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 99999 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(248, 250, 252, 0.96) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  padding: 16px !important;
+  box-sizing: border-box !important;
+}
+
+#lockScreen.hidden {
+  display: none !important;
+}
+
+.lock-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  width: 100% !important;
+  max-width: 380px !important;
+  background: #ffffff !important;
+  border-radius: 28px !important;
+  padding: 36px 28px !important;
+  box-shadow: 0 25px 60px -15px rgba(24, 39, 75, 0.2), 0 0 0 1px rgba(226, 232, 240, 0.9) !important;
+  box-sizing: border-box !important;
+}
+
+.keypad-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 12px !important;
+  width: 100% !important;
+  max-width: 260px !important;
+  margin: 0 auto 20px auto !important;
+  justify-items: center !important;
+}
+
+/* 엑셀 시트 전용 셀 스타일 */
+.excel-cell-input {
+  width: 100%;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+.excel-cell-input:focus {
+  background: #ffffff;
+  border-color: #3182f6;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(49, 130, 246, 0.2);
+}
+
+/* 책/다이어리 모달 탭 */
+.diary-book-tab {
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  border-bottom: 2px solid transparent;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.diary-book-tab.active {
+  color: #2563eb;
+  border-bottom-color: #2563eb;
+  background: #eff6ff;
+  border-radius: 8px 8px 0 0;
+}
+
+/* 여행 지도 인터랙티브 색칠 캔버스 & 팔레트 스타일 */
+.map-palette-btn {
+  cursor: pointer;
+  border: 2px solid #ffffff;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.map-palette-btn:hover {
+  transform: scale(1.15);
+}
+.map-palette-btn.active {
+  border-color: #0f172a;
+  transform: scale(1.22);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 1), 0 4px 10px rgba(15, 23, 42, 0.35);
+}
+
+.svg-map-region-group {
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.svg-map-region-group:hover {
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.18));
+}
+.svg-map-region-group:hover rect,
+.svg-map-region-group:hover path {
+  stroke-width: 2.2px !important;
+  stroke: #1d4ed8 !important;
+  filter: brightness(0.96);
+}
+
+.excel-period-btn {
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.15s ease;
+}
+.excel-period-btn.active {
+  background: #ffffff;
+  color: #2563eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+
+
+/* ========================================================
+   실제 엑셀 전용 폰트 포인트 (pt) 시스템 & 그리드 스타일
+   ======================================================== */
+html.font-pt-8, .excel-grid-table.font-pt-8, .excel-grid-table.font-pt-8 input, .excel-grid-table.font-pt-8 td, .excel-grid-table.font-pt-8 th {
+  font-size: 8pt !important;
+}
+html.font-pt-9, .excel-grid-table.font-pt-9, .excel-grid-table.font-pt-9 input, .excel-grid-table.font-pt-9 td, .excel-grid-table.font-pt-9 th {
+  font-size: 9pt !important;
+}
+html.font-pt-10, .excel-grid-table.font-pt-10, .excel-grid-table.font-pt-10 input, .excel-grid-table.font-pt-10 td, .excel-grid-table.font-pt-10 th {
+  font-size: 10pt !important;
+}
+html.font-pt-11, .excel-grid-table.font-pt-11, .excel-grid-table.font-pt-11 input, .excel-grid-table.font-pt-11 td, .excel-grid-table.font-pt-11 th {
+  font-size: 11pt !important; /* 엑셀 표준 기본값 */
+}
+html.font-pt-12, .excel-grid-table.font-pt-12, .excel-grid-table.font-pt-12 input, .excel-grid-table.font-pt-12 td, .excel-grid-table.font-pt-12 th {
+  font-size: 12pt !important;
+}
+html.font-pt-14, .excel-grid-table.font-pt-14, .excel-grid-table.font-pt-14 input, .excel-grid-table.font-pt-14 td, .excel-grid-table.font-pt-14 th {
+  font-size: 14pt !important;
+}
+
+/* 엑셀 열/행 그리드 헤더 스타일 */
+.excel-col-letter {
+  background: #f8fafc;
+  color: #64748b;
+  font-weight: 800;
+  text-align: center;
+  font-family: monospace;
+  border-right: 1px solid #cbd5e1;
+  border-bottom: 1px solid #cbd5e1;
+  padding: 4px 6px;
+  user-select: none;
+}
+.excel-row-index {
+  background: #f8fafc;
+  color: #64748b;
+  font-weight: 800;
+  text-align: center;
+  font-family: monospace;
+  border-right: 1px solid #cbd5e1;
+  border-bottom: 1px solid #e2e8f0;
+  width: 36px;
+  min-width: 36px;
+  user-select: none;
+}
+
+/* 엑셀 활성 셀 하이라이트 (Microsoft Excel Green Focus) */
+.excel-cell-focused {
+  outline: 2px solid #107c41 !important;
+  outline-offset: -2px;
+  background-color: #f0fdf4 !important;
+}
+
+/* 수식 입력줄 (Formula Bar) */
+.excel-fx-bar {
+  background: #f8fafc;
+  border-bottom: 1px solid #cbd5e1;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: monospace;
+}
+
+
+/* ========================================================
+   실제 엑셀 전용 폰트 포인트 (pt) 시스템 & 그리드 스타일
+   ======================================================== */
+html.font-pt-8, .excel-grid-table.font-pt-8, .excel-grid-table.font-pt-8 input, .excel-grid-table.font-pt-8 td, .excel-grid-table.font-pt-8 th {
+  font-size: 8pt !important;
+}
+html.font-pt-9, .excel-grid-table.font-pt-9, .excel-grid-table.font-pt-9 input, .excel-grid-table.font-pt-9 td, .excel-grid-table.font-pt-9 th {
+  font-size: 9pt !important;
+}
+html.font-pt-10, .excel-grid-table.font-pt-10, .excel-grid-table.font-pt-10 input, .excel-grid-table.font-pt-10 td, .excel-grid-table.font-pt-10 th {
+  font-size: 10pt !important;
+}
+html.font-pt-11, .excel-grid-table.font-pt-11, .excel-grid-table.font-pt-11 input, .excel-grid-table.font-pt-11 td, .excel-grid-table.font-pt-11 th {
+  font-size: 11pt !important; /* 엑셀 표준 기본값 */
+}
+html.font-pt-12, .excel-grid-table.font-pt-12, .excel-grid-table.font-pt-12 input, .excel-grid-table.font-pt-12 td, .excel-grid-table.font-pt-12 th {
+  font-size: 12pt !important;
+}
+html.font-pt-14, .excel-grid-table.font-pt-14, .excel-grid-table.font-pt-14 input, .excel-grid-table.font-pt-14 td, .excel-grid-table.font-pt-14 th {
+  font-size: 14pt !important;
+}
+
+/* 엑셀 열/행 그리드 헤더 스타일 */
+.excel-col-letter {
+  background: #f8fafc;
+  color: #64748b;
+  font-weight: 800;
+  text-align: center;
+  font-family: monospace;
+  border-right: 1px solid #cbd5e1;
+  border-bottom: 1px solid #cbd5e1;
+  padding: 4px 6px;
+  user-select: none;
+}
+.excel-row-index {
+  background: #f8fafc;
+  color: #64748b;
+  font-weight: 800;
+  text-align: center;
+  font-family: monospace;
+  border-right: 1px solid #cbd5e1;
+  border-bottom: 1px solid #e2e8f0;
+  width: 36px;
+  min-width: 36px;
+  user-select: none;
+}
+
+/* 엑셀 활성 셀 하이라이트 (Microsoft Excel Green Focus) */
+.excel-cell-focused {
+  outline: 2px solid #107c41 !important;
+  outline-offset: -2px;
+  background-color: #f0fdf4 !important;
+}
+
+/* 수식 입력줄 (Formula Bar) */
+.excel-fx-bar {
+  background: #f8fafc;
+  border-bottom: 1px solid #cbd5e1;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: monospace;
+}
+
+
+/* ── 12. 진짜 책 넘김 3D 포토북 스타일 (Open Book & Page Flip) ── */
+.book-stage {
+  perspective: 1800px;
+}
+
+.book-open-spread {
+  background: #fdfbf7;
+  border: 1px solid #e5dcc5;
+  border-radius: 16px;
+  box-shadow:
+    0 14px 35px rgba(0, 0, 0, 0.12),
+    -6px 0 0 #f5efe2,
+    -7px 0 0 #dfd4be,
+    6px 0 0 #f5efe2,
+    7px 0 0 #dfd4be;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.35s ease;
+}
+
+@media (min-width: 768px) {
+  .book-open-spread::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 28px;
+    transform: translateX(-50%);
+    background: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.04) 35%,
+      rgba(0, 0, 0, 0.11) 50%,
+      rgba(0, 0, 0, 0.04) 65%,
+      rgba(0, 0, 0, 0) 100%
+    );
+    pointer-events: none;
+    z-index: 5;
+  }
+}
+
+.book-flip-next {
+  animation: bookFlipNextAnim 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.book-flip-prev {
+  animation: bookFlipPrevAnim 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes bookFlipNextAnim {
+  0% {
+    transform: perspective(1600px) rotateY(0deg);
+    opacity: 1;
+  }
+  35% {
+    transform: perspective(1600px) rotateY(-18deg) scale(0.985);
+    opacity: 0.72;
+  }
+  100% {
+    transform: perspective(1600px) rotateY(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes bookFlipPrevAnim {
+  0% {
+    transform: perspective(1600px) rotateY(0deg);
+    opacity: 1;
+  }
+  35% {
+    transform: perspective(1600px) rotateY(18deg) scale(0.985);
+    opacity: 0.72;
+  }
+  100% {
+    transform: perspective(1600px) rotateY(0deg);
+    opacity: 1;
+  }
+}
+
+.book-side-flip-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 58px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 900;
+  color: #334155;
+  cursor: pointer;
+  z-index: 20;
+  transition: all 0.2s ease;
+}
+
+.book-side-flip-btn:hover:not(:disabled) {
+  background: #ffffff;
+  color: #1d4ed8;
+  transform: translateY(-50%) scale(1.08);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.22);
+}
+
+.book-side-flip-btn:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+/* 모바일 화면 최적화 */
+@media (max-width: 640px) {
+  .book-side-flip-btn {
+    display: none;
+  }
+  .book-open-spread::after {
+    display: none;
+  }
+  #bookPageNavBar {
+    -webkit-overflow-scrolling: touch;
+  }
+}
